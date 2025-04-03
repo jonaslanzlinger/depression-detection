@@ -2,11 +2,14 @@ from kafka import KafkaConsumer
 import json
 from pitch import estimate_pitch
 from pymongo import MongoClient
-import datetime
+from datetime import datetime, timezone
+import socketio
+import requests
+
 
 client = MongoClient("mongodb://localhost:27017")
-db = client.audio_data
-collection = db.base_frequency
+db = client.metrics
+collection = db.speech_metrics
 
 consumer = KafkaConsumer(
     "s1-mic1-audio",
@@ -14,6 +17,9 @@ consumer = KafkaConsumer(
     value_deserializer=lambda v: json.loads(v.decode("utf-8")),
     group_id="audio-processor",
 )
+
+# sio = socketio.Client()
+# sio.connect("http://localhost:5051")
 
 print("Listening for audio chunks...")
 
@@ -26,8 +32,16 @@ for msg in consumer:
     print(f"Base Frequency: {f0:.2f} Hz")
 
     # construct metric object
-    doc = {"timestamp": datetime.datetime.utcnow(), "base_frequency": f0}
+    doc = {"timestamp": datetime.now(timezone.utc).isoformat(), "base_frequency": f0}
 
     # save metric to database
     collection.insert_one(doc)
     print("document saved to db")
+    doc.pop("_id", None)
+
+    # push to websocket server
+    # sio.emit("speech_metrics", doc)
+    requests.post(
+        "http://localhost:5051/speech_metrics",
+        json=doc,
+    )
