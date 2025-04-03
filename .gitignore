@@ -1,7 +1,19 @@
 __pycache__/
 venv/
-node_modules/
+**/node_modules/
+**/package-lock.json
 
 .vscode/
 .idea/
 .DS_Store
+
+**/dist/
+**/.angular/
+**/.vscode/
+**/.idea/
+**/.DS_Store
+
+dashboard/src/environments/*.ts
+dashboard/npm-debug.log*
+dashboard/yarn-debug.log*
+dashboard/yarn-error.log*
