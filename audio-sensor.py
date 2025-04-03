@@ -10,8 +10,8 @@ producer = KafkaProducer(
 )
 
 SAMPLE_RATE = 16000
-WINDOW_SIZE = 1  # SECONDS
-BLOCK_SIZE = SAMPLE_RATE  # no data is processed twice
+WINDOW_SIZE = 3  # SECONDS
+BLOCK_SIZE = SAMPLE_RATE * WINDOW_SIZE  # no data is processed twice
 
 
 def audio_callback(indata, frames, time_info, status):
