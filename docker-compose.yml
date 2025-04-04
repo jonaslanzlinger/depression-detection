@@ -15,11 +15,12 @@ services:
          - zookeeper
       ports:
          - "9092:9092"
+         - "29092:29092"
       environment:
          KAFKA_BROKER_ID: 1
          KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-         KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
-         KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+         KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+         KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
          KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
    mongodb:
@@ -38,6 +39,38 @@ services:
          ME_CONFIG_MONGODB_SERVER: mongodb
       depends_on:
          - mongodb
+
+   dashboard:
+      build:
+         context: ./dashboard
+         dockerfile: Dockerfile
+      ports:
+         - "4200:80"
+
+   socket-server:
+      build:
+         context: ./socket-server
+         dockerfile: Dockerfile
+      ports:
+         - "5051:5051"
+      volumes:
+         - ./socket-server:/app
+      command: node server.js
+      depends_on:
+         - kafka
+         - mongodb
+
+   speech-processor:
+      build:
+         context: ./speech-processor
+         dockerfile: Dockerfile
+      volumes:
+         - ./speech-processor:/app
+      command: python speech-processor.py
+      depends_on:
+         - kafka
+         - mongodb
+         - socket-server
 
 volumes:
    mongo_data:

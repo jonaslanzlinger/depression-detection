@@ -1,0 +1,6 @@
+kafka-python
+pymongo
+requests
+python-socketio
+numpy
+librosa

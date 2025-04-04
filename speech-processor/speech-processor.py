@@ -5,18 +5,28 @@ from pymongo import MongoClient
 from datetime import datetime, timezone
 import socketio
 import requests
+import time
+from kafka.errors import NoBrokersAvailable
+
+MAX_RETRIES = 3
+for i in range(MAX_RETRIES):
+    try:
+        consumer = KafkaConsumer(
+            "s1-mic1-audio",
+            bootstrap_servers=["kafka:9092"],
+            value_deserializer=lambda v: json.loads(v.decode("utf-8")),
+            group_id="speech-processor-group",
+        )
+        print("Connected to Kafka!")
+        break
+    except NoBrokersAvailable:
+        print("Kafka not ready, retrying in 5 seconds...")
+        time.sleep(5)
 
 
-client = MongoClient("mongodb://localhost:27017")
+client = MongoClient("mongodb://mongodb:27017")
 db = client.metrics
 collection = db.speech_metrics
-
-consumer = KafkaConsumer(
-    "s1-mic1-audio",
-    bootstrap_servers=["localhost:9092"],
-    value_deserializer=lambda v: json.loads(v.decode("utf-8")),
-    group_id="audio-processor",
-)
 
 # sio = socketio.Client()
 # sio.connect("http://localhost:5051")
@@ -42,6 +52,6 @@ for msg in consumer:
     # push to websocket server
     # sio.emit("speech_metrics", doc)
     requests.post(
-        "http://localhost:5051/speech_metrics",
+        "http://socket-server:5051/speech_metrics",
         json=doc,
     )
