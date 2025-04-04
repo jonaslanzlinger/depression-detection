@@ -24,7 +24,7 @@ io.on("connection", (socket) => {
 
 app.post("/speech_metrics", (req, res) => {
    const data = req.body;
-   console.log("Received from audio-processor:", data);
+   console.log("Received from speech-processor:", data);
 
    // emit socket message for the frontend
    io.emit("audio_to_frontend", data);
