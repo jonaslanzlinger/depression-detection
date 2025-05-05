@@ -1,8 +1,16 @@
+import paho.mqtt.client as mqtt
+import json
+import time
+from paho.mqtt.client import CallbackAPIVersion
 import sounddevice as sd
 import webrtcvad
 import numpy as np
 import collections
 import wave
+
+client = mqtt.Client(callback_api_version=CallbackAPIVersion.VERSION2)
+client.connect("localhost", 1883, 60)
+client.loop_start()
 
 
 SAMPLE_RATE = 16000
@@ -49,20 +57,37 @@ def callback(indata, frames, time, status):
         output_audio.append(audio_bytes)
         if not is_speech:
             triggered = False
-            save_segment(output_audio)
+            data_sink(output_audio)
             output_audio = []
 
 
-def save_segment(frames):
-    filename = f"segment_{save_segment.counter}.wav"
-    wf = wave.open(filename, "wb")
-    wf.setnchannels(1)
-    wf.setsampwidth(2)  # 16-bit
-    wf.setframerate(SAMPLE_RATE)
-    wf.writeframes(b"".join(frames))
-    wf.close()
-    print(f"Saved {filename}")
-    save_segment.counter += 1
+def data_sink(frames, debug=False):
+    full_audio_bytes = b"".join(frames)
+    audio_np = np.frombuffer(full_audio_bytes, dtype=np.int16)
+    audio_list = audio_np.tolist()
+
+    payload = {
+        "timestamp": time.time(),
+        "sample_rate": SAMPLE_RATE,
+        "audio": audio_list,
+    }
+
+    payload_str = json.dumps(payload)
+    client.publish("s1-mic1-audio", payload_str)
+    print(f"Published segment via MQTT")
+
+    if debug:
+        filename = f"segment_{payload.timestamp}.wav"
+        wf = wave.open(filename, "wb")
+        wf.setnchannels(1)
+        wf.setsampwidth(2)  # 16-bit
+        wf.setframerate(SAMPLE_RATE)
+        wf.writeframes(full_audio_bytes)
+        wf.close()
+        data_sink.counter += 1
+
+
+data_sink.counter = 0
 
 
 def compute_snr(signal):
@@ -71,8 +96,6 @@ def compute_snr(signal):
         return -np.inf
     return 20 * np.log10(rms / 1e-5)
 
-
-save_segment.counter = 0
 
 with sd.InputStream(
     channels=CHANNELS,
