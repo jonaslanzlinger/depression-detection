@@ -1,3 +1,4 @@
+from audio_utils import encode_audio_to_base64
 import paho.mqtt.client as mqtt
 import json
 import time
@@ -7,6 +8,9 @@ import webrtcvad
 import numpy as np
 import collections
 import wave
+import io
+import base64
+import soundfile as sf
 
 client = mqtt.Client(callback_api_version=CallbackAPIVersion.VERSION2)
 client.connect("localhost", 1883, 60)
@@ -39,10 +43,10 @@ def callback(indata, frames, time, status):
 
     # Rudimentary pre-processing to filter out non-speech
     # 1. Noise Gate
-    if np.max(np.abs(float_audio)) < 0.018:
+    if np.max(np.abs(float_audio)) < 0.016:
         return
     # 2. Signal-to-Noise Ration: 10 dB, try other values
-    if compute_snr(float_audio) < 20:
+    if compute_snr(float_audio) < 14:
         return
 
     is_speech = vad.is_speech(audio_bytes, SAMPLE_RATE)
@@ -62,14 +66,16 @@ def callback(indata, frames, time, status):
 
 
 def data_sink(frames, debug=False):
+    data_sink.counter = (data_sink.counter + 1) % 1_000_000
     full_audio_bytes = b"".join(frames)
+
     audio_np = np.frombuffer(full_audio_bytes, dtype=np.int16)
-    audio_list = audio_np.tolist()
+    audio_b64 = encode_audio_to_base64(audio_np, SAMPLE_RATE)
 
     payload = {
         "timestamp": time.time(),
         "sample_rate": SAMPLE_RATE,
-        "audio": audio_list,
+        "audio": audio_b64,
     }
 
     payload_str = json.dumps(payload)
@@ -77,14 +83,9 @@ def data_sink(frames, debug=False):
     print(f"Published segment via MQTT")
 
     if debug:
-        filename = f"segment_{payload.timestamp}.wav"
-        wf = wave.open(filename, "wb")
-        wf.setnchannels(1)
-        wf.setsampwidth(2)  # 16-bit
-        wf.setframerate(SAMPLE_RATE)
-        wf.writeframes(full_audio_bytes)
-        wf.close()
-        data_sink.counter += 1
+        filename = f"segment_{data_sink.counter}.wav"
+        with open(filename, "wb") as f:
+            f.write(base64.b64decode(audio_b64))
 
 
 data_sink.counter = 0

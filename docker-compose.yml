@@ -58,5 +58,16 @@ services:
          - mongodb
          - socket-server
 
+   temporal-context-model:
+      build:
+         context: ./temporal-context-model
+         dockerfile: Dockerfile
+      ports:
+         - "8000:8000"
+      volumes:
+         - ./temporal-context-model:/app
+      depends_on:
+         - mongodb
+
 volumes:
    mongo_data:
