@@ -1,4 +1,4 @@
-kafka-python
+paho-mqtt
 pymongo
 requests
 python-socketio

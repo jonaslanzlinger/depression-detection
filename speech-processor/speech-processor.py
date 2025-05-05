@@ -1,4 +1,3 @@
-from kafka import KafkaConsumer
 import json
 from pitch import estimate_pitch
 from pymongo import MongoClient
@@ -6,52 +5,50 @@ from datetime import datetime, timezone
 import socketio
 import requests
 import time
-from kafka.errors import NoBrokersAvailable
-
-MAX_RETRIES = 3
-for i in range(MAX_RETRIES):
-    try:
-        consumer = KafkaConsumer(
-            "s1-mic1-audio",
-            bootstrap_servers=["kafka:9092"],
-            value_deserializer=lambda v: json.loads(v.decode("utf-8")),
-            group_id="speech-processor-group",
-        )
-        print("Connected to Kafka!")
-        break
-    except NoBrokersAvailable:
-        print("Kafka not ready, retrying in 5 seconds...")
-        time.sleep(5)
+import paho.mqtt.client as mqtt
+from paho.mqtt.client import CallbackAPIVersion
 
 
 client = MongoClient("mongodb://mongodb:27017")
 db = client.metrics
-collection = db.speech_metrics
+collection = db.metrics_all
 
-# sio = socketio.Client()
-# sio.connect("http://localhost:5051")
+MQTT_TOPIC = "s1-mic1-audio"
 
-print("Listening for audio chunks...")
 
-for msg in consumer:
-    data = msg.value
-    audio = data["audio"]
-    sample_rate = data["sample_rate"]
+def on_connect(client, userdata, flags, rc, properties=None):
+    print("Connected to MQTT with result code", rc)
+    client.subscribe(MQTT_TOPIC)
 
-    f0 = estimate_pitch(audio, sample_rate)
-    print(f"Base Frequency: {f0:.2f} Hz")
 
-    # construct metric object
-    doc = {"timestamp": datetime.now(timezone.utc).isoformat(), "base_frequency": f0}
+def on_message(client, userdata, msg):
+    try:
+        data = json.loads(msg.payload.decode())
+        audio = data["audio"]
+        sample_rate = data["sample_rate"]
 
-    # save metric to database
-    collection.insert_one(doc)
-    print("document saved to db")
-    doc.pop("_id", None)
+        f0 = estimate_pitch(audio, sample_rate)
+        print(f"Base Frequency: {f0:.2f} Hz")
 
-    # push to websocket server
-    # sio.emit("speech_metrics", doc)
-    requests.post(
-        "http://socket-server:5051/speech_metrics",
-        json=doc,
-    )
+        doc = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "base_frequency": f0,
+        }
+
+        collection.insert_one(doc)
+        print("Document saved to DB")
+
+        doc.pop("_id", None)
+        requests.post("http://socket-server:5051/speech_metrics", json=doc)
+        print("Posted to socket server")
+
+    except Exception as e:
+        print("Error processing message:", e)
+
+
+client = mqtt.Client(callback_api_version=CallbackAPIVersion.VERSION2)
+client.on_connect = on_connect
+client.on_message = on_message
+
+client.connect("mqtt", 1883, 60)
+client.loop_forever()
