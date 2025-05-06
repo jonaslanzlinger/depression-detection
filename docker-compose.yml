@@ -46,14 +46,21 @@ services:
          - mqtt
          - mongodb
 
-   temporal-context-model:
+   user-recognition:
       build:
-         context: ./temporal-context-model
+         context: ./user-recognition
          dockerfile: Dockerfile
       ports:
          - "8000:8000"
       volumes:
-         - ./temporal-context-model:/app
+         - ./user-recognition:/app
+      depends_on:
+         - mongodb
+
+   temporal-context:
+      build: ./temporal-context
+      ports:
+         - "8082:8082"
       depends_on:
          - mongodb
 

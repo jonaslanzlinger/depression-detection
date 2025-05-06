@@ -1,0 +1,71 @@
+from fastapi import FastAPI, Query
+from pymongo import MongoClient
+from datetime import datetime
+import pandas as pd
+import numpy as np
+from hmmlearn.hmm import GaussianHMM
+
+app = FastAPI()
+client = MongoClient("mongodb://mongodb:27017/")
+db = client.test
+
+
+@app.get("/compute")
+def compute_contextual_scores(user_id: int = Query(..., description="User ID")):
+    collection = db.metrics
+    contextual_collection = db.contextual_metrics
+
+    documents = list(collection.find({"user_id": user_id}))
+    if not documents:
+        return {"status": "no data found for user", "user_id": user_id}
+
+    documents.sort(key=lambda x: datetime.strptime(x["date"], "%d.%m.%Y"))
+    df = pd.DataFrame(
+        {
+            "date": [datetime.strptime(doc["date"], "%d.%m.%Y") for doc in documents],
+            "f0": [doc["f0"] for doc in documents],
+            "loudness": [doc["loudness"] for doc in documents],
+        }
+    )
+
+    df["f0_norm"] = (df["f0"] - df["f0"].mean()) / df["f0"].std()
+    df["loudness_norm"] = (df["loudness"] - df["loudness"].mean()) / df[
+        "loudness"
+    ].std()
+
+    observations = df[["f0_norm", "loudness_norm"]].values
+    n_states = 10
+    model = GaussianHMM(
+        n_components=n_states, covariance_type="diag", n_iter=200, random_state=42
+    )
+    model.fit(observations)
+    df["state"] = model.predict(observations)
+
+    state_means_f0 = model.means_[:, 0]
+    state_means_loudness = model.means_[:, 1]
+
+    contextual_records = []
+    for idx, row in df.iterrows():
+        state = row["state"]
+        f0_dev = abs(row["f0_norm"] - state_means_f0[state])
+        loudness_dev = abs(row["loudness_norm"] - state_means_loudness[state])
+
+        record = {
+            "user_id": user_id,
+            "date": row["date"].strftime("%d.%m.%Y"),
+            "f0_score": float(f0_dev),
+            "loudness_score": float(loudness_dev),
+            "state_id": int(state),
+            "f0_state_mean": float(state_means_f0[state]),
+            "loudness_state_mean": float(state_means_loudness[state]),
+        }
+        contextual_records.append(record)
+
+    if contextual_records:
+        contextual_collection.insert_many(contextual_records)
+
+    return {
+        "status": "success",
+        "records_inserted": len(contextual_records),
+        "user_id": user_id,
+    }

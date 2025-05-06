@@ -3,10 +3,8 @@ import json
 from pitch import estimate_pitch
 from pymongo import MongoClient
 from datetime import datetime, timezone
-import socketio
 import requests
 import base64
-import time
 import paho.mqtt.client as mqtt
 from paho.mqtt.client import CallbackAPIVersion
 
@@ -32,7 +30,7 @@ def on_message(client, userdata, msg):
 
         # Recognize the user first, before doing anything else
         res = requests.post(
-            "http://temporal-context-model:8000/speech-user-recognition",
+            "http://user-recognition:8000/speech-user-recognition",
             data=base64.b64decode(audio_b64),
         )
         print("User recognition:", res.json())
@@ -47,10 +45,6 @@ def on_message(client, userdata, msg):
 
         collection.insert_one(doc)
         print("Document saved to DB")
-
-        doc.pop("_id", None)
-        requests.post("http://socket-server:5051/speech_metrics", json=doc)
-        print("Posted to socket server")
 
     except Exception as e:
         print("Error processing message:", e)
