@@ -43,10 +43,10 @@ def callback(indata, frames, time, status):
 
     # Rudimentary pre-processing to filter out non-speech
     # 1. Noise Gate
-    if np.max(np.abs(float_audio)) < 0.016:
+    if np.max(np.abs(float_audio)) < 0.014:
         return
     # 2. Signal-to-Noise Ration: 10 dB, try other values
-    if compute_snr(float_audio) < 14:
+    if compute_snr(float_audio) < 12:
         return
 
     is_speech = vad.is_speech(audio_bytes, SAMPLE_RATE)
