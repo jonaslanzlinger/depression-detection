@@ -25,27 +25,16 @@ services:
       depends_on:
          - mongodb
 
-   dashboard:
+   streamlit:
       build:
-         context: ./dashboard
+         context: ./streamlit-app
          dockerfile: Dockerfile
       ports:
-         - "4200:80"
+         - "8501:8501"
       depends_on:
-         - socket-server
-
-   socket-server:
-      build:
-         context: ./socket-server
-         dockerfile: Dockerfile
-      ports:
-         - "5051:5051"
-      volumes:
-         - ./socket-server:/app
-      command: node server.js
-      depends_on:
-         - mqtt
          - mongodb
+      environment:
+         - PYTHONBUFFERED=1
 
    speech-processor:
       build:
@@ -56,7 +45,6 @@ services:
       depends_on:
          - mqtt
          - mongodb
-         - socket-server
 
    temporal-context-model:
       build:
