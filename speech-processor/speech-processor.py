@@ -7,6 +7,7 @@ import requests
 import base64
 import paho.mqtt.client as mqtt
 from paho.mqtt.client import CallbackAPIVersion
+from extractors.handler import compute_metrics
 
 
 client = MongoClient("mongodb://mongodb:27017")
@@ -35,14 +36,18 @@ def on_message(client, userdata, msg):
         )
         print("User recognition:", res.json())
 
-        f0 = estimate_pitch(audio_np, sample_rate)
-        print(f"Base Frequency: {f0:.2f} Hz")
+        # Compute all metrics
+        doc = compute_metrics(audio_np, sample_rate)
 
-        doc = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "base_frequency": f0,
-        }
+        # f0 = estimate_pitch(audio_np, sample_rate)
+        # print(f"Base Frequency: {f0:.2f} Hz")
 
+        # doc = {
+        #     "timestamp": datetime.now(timezone.utc).isoformat(),
+        #     "base_frequency": f0,
+        # }
+
+        # Insert metric record into DB
         collection.insert_one(doc)
         print("Document saved to DB")
 
