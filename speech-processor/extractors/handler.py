@@ -1,5 +1,3 @@
-from f0 import get_f0_avg, get_f0_std
-from hnr import get_hnr_mean
 import opensmile
 from datetime import datetime, timezone
 from extractors.f0 import get_f0_avg, get_f0_std
@@ -7,9 +5,18 @@ from extractors.hnr import get_hnr_mean
 from extractors.jitter import get_jitter
 from extractors.shimmer import get_shimmer
 from extractors.myprosody_extractors import myprosody_extractors_handler
+import numpy as np
 
 
 def compute_metrics(audio_np, sample_rate):
+
+    # Convert audio data into correct format
+    if audio_np.dtype == np.int16:
+        audio_np = audio_np.astype(np.float32) / 32768.0
+    elif audio_np.dtype != np.float32:
+        audio_np = audio_np.astype(np.float32)
+
+    audio_np = np.clip(audio_np, -1.0, 1.0)
 
     # first, compute the low-level descriptors (LLD)
     smile_lld = opensmile.Smile(
@@ -43,10 +50,10 @@ def compute_metrics(audio_np, sample_rate):
     # Prepare and return the metrics as a dict
     doc = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "f0_avg": f0_avg,
-        "f0_std": f0_std,
-        "hnr_mean": hnr_mean,
-        "jitter": jitter,
-        "shimmer": shimmer,
+        "f0_avg": float(f0_avg),
+        "f0_std": float(f0_std),
+        "hnr_mean": float(hnr_mean),
+        "jitter": float(jitter.values[0]),
+        "shimmer": float(shimmer.values[0]),
     }
     return doc

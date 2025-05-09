@@ -1,6 +1,5 @@
 from audio_utils import decode_base64_to_audio
 import json
-from pitch import estimate_pitch
 from pymongo import MongoClient
 from datetime import datetime, timezone
 import requests
@@ -38,14 +37,6 @@ def on_message(client, userdata, msg):
 
         # Compute all metrics
         doc = compute_metrics(audio_np, sample_rate)
-
-        # f0 = estimate_pitch(audio_np, sample_rate)
-        # print(f"Base Frequency: {f0:.2f} Hz")
-
-        # doc = {
-        #     "timestamp": datetime.now(timezone.utc).isoformat(),
-        #     "base_frequency": f0,
-        # }
 
         # Insert metric record into DB
         collection.insert_one(doc)

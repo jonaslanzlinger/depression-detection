@@ -1,2 +1,2 @@
-def get_shimmer(features_HLD, audio_signal, sr):
+def get_shimmer(features_HLD):
     return features_HLD.filter(like="shimmerLocal_sma_amean", axis=1)
