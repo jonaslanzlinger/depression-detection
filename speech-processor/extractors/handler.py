@@ -1,16 +1,12 @@
 from f0 import get_f0_avg, get_f0_std
 from hnr import get_hnr_mean
 import opensmile
-from pathlib import Path
-import soundfile as sf
 from datetime import datetime, timezone
-import librosa
 from extractors.f0 import get_f0_avg, get_f0_std
 from extractors.hnr import get_hnr_mean
 from extractors.jitter import get_jitter
 from extractors.shimmer import get_shimmer
-import parselmouth
-from parselmouth.praat import call
+from extractors.myprosody_extractors import myprosody_extractors_handler
 
 
 def compute_metrics(audio_np, sample_rate):
@@ -37,6 +33,12 @@ def compute_metrics(audio_np, sample_rate):
     hnr_mean = get_hnr_mean(features_LLD)
     jitter = get_jitter(features_HLD)
     shimmer = get_shimmer(features_HLD)
+
+    myprosody_metrics = {"speech_rate": None}
+    myprosody_metrics = myprosody_extractors_handler(
+        audio_np, sample_rate, myprosody_metrics
+    )
+    print(myprosody_metrics)
 
     # Prepare and return the metrics as a dict
     doc = {
