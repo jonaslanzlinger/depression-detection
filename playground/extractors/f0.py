@@ -2,6 +2,7 @@ import librosa
 import numpy as np
 
 
+# TODO constants always on top of the code
 def get_f0_avg(features_LLD, audio_signal, sr):
     """
     Compute fundamental frequency (F0) average using openSMILE and librosa in combination
