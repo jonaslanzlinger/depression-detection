@@ -79,7 +79,8 @@ def data_sink(frames, debug=False):
     }
 
     payload_str = json.dumps(payload)
-    client.publish("s1-mic1-audio", payload_str)
+    result = client.publish("s1-mic1-audio", payload_str)
+    result.wait_for_publish()
     print(f"Published segment via MQTT")
 
     if debug:

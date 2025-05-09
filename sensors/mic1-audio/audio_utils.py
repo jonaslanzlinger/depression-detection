@@ -8,6 +8,8 @@ def encode_audio_to_base64(audio_np: np.ndarray, sample_rate: int) -> str:
     """
     Converts a NumPy audio array (int16 or float32) to base64-encoded WAV bytes.
     """
+    if audio_np.dtype != np.int16:
+        audio_np = np.clip(audio_np, -1.0, 1.0)
     with io.BytesIO() as wav_io:
         sf.write(
             wav_io, audio_np, samplerate=sample_rate, format="WAV", subtype="PCM_16"

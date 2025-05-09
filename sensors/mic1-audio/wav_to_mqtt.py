@@ -22,7 +22,7 @@ if audio_np.ndim > 1:
 
 # Convert to int16 if not already
 if audio_np.dtype != np.int16:
-    audio_np = (audio_np * 32767).astype(np.int16)
+    audio_b64 = encode_audio_to_base64(audio_np, sample_rate)
 
 # Encode to base64
 audio_b64 = encode_audio_to_base64(audio_np, sample_rate)
@@ -33,5 +33,6 @@ payload = {
     "audio": audio_b64,
 }
 
-client.publish(TOPIC, json.dumps(payload))
+result = client.publish(TOPIC, json.dumps(payload))
+result.wait_for_publish()
 print(f"Published .wav via MQTT")
