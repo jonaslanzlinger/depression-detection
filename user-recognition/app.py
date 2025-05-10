@@ -34,7 +34,7 @@ def match_user(embedding):
 
 
 def add_new_user(embedding):
-    user_id = f"user_{len(user_profiles) + 1}"
+    user_id = len(user_profiles) + 1
     user_profiles[user_id] = [embedding]
     return user_id
 
