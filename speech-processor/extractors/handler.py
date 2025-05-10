@@ -4,6 +4,7 @@ from extractors.f0 import get_f0_avg, get_f0_std
 from extractors.hnr import get_hnr_mean
 from extractors.jitter import get_jitter
 from extractors.shimmer import get_shimmer
+from extractors.snr import get_snr
 from extractors.myprosody_extractors import myprosody_extractors_handler
 import numpy as np
 from extractors.myprosody_extractors import MyprosodyMetrics
@@ -33,6 +34,9 @@ def compute_metrics(audio_np, sample_rate):
     )
     features_HLD = smile_hld.process_signal(audio_np, sample_rate)
 
+    snr_features = features_HLD.filter(regex="(?i)snr|energy|intensity")
+    print(snr_features.columns)
+
     # ----------------------------
     # Extract features
     # ----------------------------
@@ -41,6 +45,7 @@ def compute_metrics(audio_np, sample_rate):
     hnr_mean = get_hnr_mean(features_LLD)
     jitter = get_jitter(features_HLD)
     shimmer = get_shimmer(features_HLD)
+    snr = get_snr(features_HLD)
 
     # Define which metrics should be returned
     myprosody_metrics = []
@@ -60,6 +65,7 @@ def compute_metrics(audio_np, sample_rate):
         "hnr_mean": float(hnr_mean),
         "jitter": float(jitter.values[0]),
         "shimmer": float(shimmer.values[0]),
+        "snr": float(snr),
     }
     doc.update(myprosody_metrics)
 
