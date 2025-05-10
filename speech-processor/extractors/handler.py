@@ -5,6 +5,7 @@ from extractors.hnr import get_hnr_mean
 from extractors.jitter import get_jitter
 from extractors.shimmer import get_shimmer
 from extractors.snr import get_snr
+from extractors.rms_energy import get_rms_energy_range, get_rms_energy_std
 from extractors.myprosody_extractors import myprosody_extractors_handler
 import numpy as np
 from extractors.myprosody_extractors import MyprosodyMetrics
@@ -46,6 +47,8 @@ def compute_metrics(audio_np, sample_rate):
     jitter = get_jitter(features_HLD)
     shimmer = get_shimmer(features_HLD)
     snr = get_snr(features_HLD)
+    rms_energy_range = get_rms_energy_range(features_HLD)
+    rms_energy_std = get_rms_energy_std(features_HLD)
 
     # Define which metrics should be returned
     myprosody_metrics = []
@@ -66,6 +69,8 @@ def compute_metrics(audio_np, sample_rate):
         "jitter": float(jitter.values[0]),
         "shimmer": float(shimmer.values[0]),
         "snr": float(snr),
+        "rms_energy_range": float(rms_energy_range),
+        "rms_energy_std": float(rms_energy_std),
     }
     doc.update(myprosody_metrics)
 
