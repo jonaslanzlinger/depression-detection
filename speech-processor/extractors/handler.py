@@ -1,6 +1,6 @@
 import opensmile
 from datetime import datetime, timezone
-from extractors.f0 import get_f0_avg, get_f0_std
+from extractors.f0 import get_f0_avg, get_f0_std, get_f0_range
 from extractors.hnr import get_hnr_mean
 from extractors.jitter import get_jitter
 from extractors.shimmer import get_shimmer
@@ -43,6 +43,7 @@ def compute_metrics(audio_np, sample_rate):
     # ----------------------------
     f0_avg = get_f0_avg(features_LLD, audio_np, sample_rate)
     f0_std = get_f0_std(features_LLD, audio_np, sample_rate)
+    f0_range = get_f0_range(features_LLD, audio_np, sample_rate)
     hnr_mean = get_hnr_mean(features_LLD)
     jitter = get_jitter(features_HLD)
     shimmer = get_shimmer(features_HLD)
@@ -65,6 +66,7 @@ def compute_metrics(audio_np, sample_rate):
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "f0_avg": float(f0_avg),
         "f0_std": float(f0_std),
+        "f0_range": float(f0_range),
         "hnr_mean": float(hnr_mean),
         "jitter": float(jitter.values[0]),
         "shimmer": float(shimmer.values[0]),
