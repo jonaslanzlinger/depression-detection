@@ -5,6 +5,7 @@ import myprosody as mysp
 import os
 import contextlib
 import io
+import pandas as pd
 
 MYPROSODY_DIR_PATH = "/app/myprosody"
 
@@ -24,6 +25,8 @@ class MyprosodyMetrics(Enum):
     F0_MAX = "f0_max"
     F0_QUANTILE25 = "f0_quantile25"
     F0_QUANTILE75 = "f0_quantile75"
+    PAUSE_COUNT = "pause_count"
+    PAUSE_DURATION = "pause_duration"
 
 
 MYPROSODY_RESULT_KEYS = [
@@ -41,6 +44,8 @@ MYPROSODY_RESULT_KEYS = [
     "f0_max",
     "f0_quantile25",
     "f0_quantile75",
+    "pause_count",
+    "pause_duration",
 ]
 
 
@@ -60,10 +65,20 @@ def myprosody_extractors_handler(
 
     with contextlib.redirect_stdout(io.StringIO()):
         results_df = mysp.mysptotal(temp_wav_name, MYPROSODY_DIR_PATH)
-
-    os.remove(temp_wav_path)
+        pause_count = mysp.mysppaus(temp_wav_name, MYPROSODY_DIR_PATH)
+        pause_duration = mysp.myprosody(temp_wav_name, MYPROSODY_DIR_PATH)
 
     results = results_df.iloc[:, 0].tolist()
-    result_dict = dict(zip(MYPROSODY_RESULT_KEYS, results))
+    result_dict = dict(zip(MYPROSODY_RESULT_KEYS[:14], results))
+    result_dict["pause_count"] = pause_count
+
+    csv_path = f"{MYPROSODY_DIR_PATH}/dataset/datanewchi22.csv"
+    try:
+        pause_duration_df = pd.read_csv(csv_path, header=None)
+        pause_duration = float(pause_duration_df.iloc[0, 0])
+        result_dict["pause_duration"] = pause_duration
+    except Exception as e:
+        print(f"Warning: Failed to read pause duration: {e}")
+        result_dict["pause_duration"] = None
 
     return {metric.value: result_dict[metric.value] for metric in myprosody_metrics}

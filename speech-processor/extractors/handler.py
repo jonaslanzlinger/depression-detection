@@ -43,7 +43,11 @@ def compute_metrics(audio_np, sample_rate):
     shimmer = get_shimmer(features_HLD)
 
     # Define which metrics should be returned
-    myprosody_metrics = [MyprosodyMetrics.RATE_OF_SPEECH]
+    myprosody_metrics = []
+    myprosody_metrics.append(MyprosodyMetrics.RATE_OF_SPEECH)
+    myprosody_metrics.append(MyprosodyMetrics.ARTICULATION_RATE)
+    myprosody_metrics.append(MyprosodyMetrics.PAUSE_COUNT)
+    myprosody_metrics.append(MyprosodyMetrics.PAUSE_DURATION)
     myprosody_metrics = myprosody_extractors_handler(
         audio_np, sample_rate, myprosody_metrics
     )
