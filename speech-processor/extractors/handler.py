@@ -6,6 +6,7 @@ from extractors.jitter import get_jitter
 from extractors.shimmer import get_shimmer
 from extractors.myprosody_extractors import myprosody_extractors_handler
 import numpy as np
+from extractors.myprosody_extractors import MyprosodyMetrics
 
 
 def compute_metrics(audio_np, sample_rate):
@@ -41,11 +42,11 @@ def compute_metrics(audio_np, sample_rate):
     jitter = get_jitter(features_HLD)
     shimmer = get_shimmer(features_HLD)
 
-    myprosody_metrics = {"speech_rate": None}
+    # Define which metrics should be returned
+    myprosody_metrics = [MyprosodyMetrics.RATE_OF_SPEECH]
     myprosody_metrics = myprosody_extractors_handler(
         audio_np, sample_rate, myprosody_metrics
     )
-    print(myprosody_metrics)
 
     # Prepare and return the metrics as a dict
     doc = {
@@ -56,4 +57,6 @@ def compute_metrics(audio_np, sample_rate):
         "jitter": float(jitter.values[0]),
         "shimmer": float(shimmer.values[0]),
     }
+    doc.update(myprosody_metrics)
+
     return doc
