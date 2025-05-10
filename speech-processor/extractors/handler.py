@@ -34,8 +34,8 @@ def compute_metrics(audio_np, sample_rate):
     )
     features_HLD = smile_hld.process_signal(audio_np, sample_rate)
 
-    snr_features = features_HLD.filter(regex="(?i)snr|energy|intensity")
-    print(snr_features.columns)
+    # test_features = features_HLD.filter(regex="(?i)snr|energy|intensity")
+    # print(test_features.columns)
 
     # ----------------------------
     # Extract features
