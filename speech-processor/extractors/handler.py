@@ -6,6 +6,7 @@ from extractors.jitter import get_jitter
 from extractors.shimmer import get_shimmer
 from extractors.snr import get_snr
 from extractors.rms_energy import get_rms_energy_range, get_rms_energy_std
+from extractors.formants import get_formant_f1_frequencies
 from extractors.myprosody_extractors import myprosody_extractors_handler
 import numpy as np
 from extractors.myprosody_extractors import MyprosodyMetrics
@@ -21,35 +22,46 @@ def compute_metrics(audio_np, sample_rate):
 
     audio_np = np.clip(audio_np, -1.0, 1.0)
 
-    # first, compute the low-level descriptors (LLD)
-    smile_lld = opensmile.Smile(
+    # first, compute the low-level descriptors (LLD) using ComParE_2016
+    smile_LLD_ComParE_2016 = opensmile.Smile(
         feature_set=opensmile.FeatureSet.ComParE_2016,
         feature_level=opensmile.FeatureLevel.LowLevelDescriptors,
     )
-    features_LLD = smile_lld.process_signal(audio_np, sample_rate)
+    features_LLD_ComParE_2016 = smile_LLD_ComParE_2016.process_signal(
+        audio_np, sample_rate
+    )
 
-    # second, compute the high-level descriptors (HLD)
-    smile_hld = opensmile.Smile(
+    # second, compute the low-level descriptors (LLD) using GeMAPSv01b
+    smile_LLD_GeMAPSv01b = opensmile.Smile(
+        feature_set=opensmile.FeatureSet.eGeMAPSv02,
+        feature_level=opensmile.FeatureLevel.LowLevelDescriptors,
+    )
+    features_LLD_GeMAPSv01b = smile_LLD_GeMAPSv01b.process_signal(audio_np, sample_rate)
+
+    # third, compute the high-level descriptors (HLD) using ComParE_2016
+    smile_HLD_ComParE_2016 = opensmile.Smile(
         feature_set=opensmile.FeatureSet.ComParE_2016,
         feature_level=opensmile.FeatureLevel.Functionals,
     )
-    features_HLD = smile_hld.process_signal(audio_np, sample_rate)
+    features_HLD = smile_HLD_ComParE_2016.process_signal(audio_np, sample_rate)
 
-    # test_features = features_HLD.filter(regex="(?i)snr|energy|intensity")
-    # print(test_features.columns)
+    test_features = features_LLD_GeMAPSv01b.filter(regex="(?i)f2|intensity")
+    print(test_features.columns)
+    print(features_LLD_GeMAPSv01b.columns)
 
     # ----------------------------
     # Extract features
     # ----------------------------
-    f0_avg = get_f0_avg(features_LLD, audio_np, sample_rate)
-    f0_std = get_f0_std(features_LLD, audio_np, sample_rate)
-    f0_range = get_f0_range(features_LLD, audio_np, sample_rate)
-    hnr_mean = get_hnr_mean(features_LLD)
+    f0_avg = get_f0_avg(features_LLD_ComParE_2016, audio_np, sample_rate)
+    f0_std = get_f0_std(features_LLD_ComParE_2016, audio_np, sample_rate)
+    f0_range = get_f0_range(features_LLD_ComParE_2016, audio_np, sample_rate)
+    hnr_mean = get_hnr_mean(features_LLD_ComParE_2016)
     jitter = get_jitter(features_HLD)
     shimmer = get_shimmer(features_HLD)
     snr = get_snr(features_HLD)
     rms_energy_range = get_rms_energy_range(features_HLD)
     rms_energy_std = get_rms_energy_std(features_HLD)
+    formant_f1_frequencies = get_formant_f1_frequencies(features_LLD_GeMAPSv01b)
 
     # Define which metrics should be returned
     myprosody_metrics = []
@@ -73,6 +85,7 @@ def compute_metrics(audio_np, sample_rate):
         "snr": float(snr),
         "rms_energy_range": float(rms_energy_range),
         "rms_energy_std": float(rms_energy_std),
+        "formant_f1_frequencies_mean": formant_f1_frequencies,
     }
     doc.update(myprosody_metrics)
 
