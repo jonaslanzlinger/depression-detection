@@ -3,7 +3,7 @@ from pymongo import MongoClient
 import pandas as pd
 
 client = MongoClient("mongodb://mongodb:27017")
-db = client["test"]
+db = client["iotsensing"]
 collection = db["metrics"]
 
 df = pd.DataFrame(collection.find())

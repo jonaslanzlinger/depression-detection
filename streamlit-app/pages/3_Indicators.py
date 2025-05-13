@@ -3,8 +3,8 @@ from pymongo import MongoClient
 import pandas as pd
 
 client = MongoClient("mongodb://mongodb:27017")
-db = client["test"]
-collection = db["metrics"]
+db = client["iotsensing"]
+collection = db["indicators"]
 
 df = pd.DataFrame(collection.find())
 df["date"] = pd.to_datetime(df["date"], format="%d.%m.%Y")
