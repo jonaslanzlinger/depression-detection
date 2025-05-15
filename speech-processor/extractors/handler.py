@@ -11,7 +11,7 @@ from extractors.spectral_flatness import get_spectral_flatness
 from extractors.myprosody_extractors import myprosody_extractors_handler
 from extractors.temporal_modulation import get_temporal_modulation
 from extractors.spectral_modulation import get_spectral_modulation
-from extractors.voice_onset_time import get_voice_onset_time
+from extractors.voice_onset_time import get_vot
 from extractors.glottal_pulse_rate import get_glottal_pulse_rate
 from extractors.psd_subbands import get_psd_subbands
 from extractors.voicing_states import (
@@ -24,7 +24,7 @@ import numpy as np
 from extractors.myprosody_extractors import MyprosodyMetrics
 
 
-def compute_metrics(audio_np, sample_rate):
+def compute_metrics(audio_np, sample_rate, user_id):
 
     # Convert audio data into correct format
     if audio_np.dtype == np.int16:
@@ -73,7 +73,7 @@ def compute_metrics(audio_np, sample_rate):
     spectral_flatness = get_spectral_flatness(audio_np)
     temporal_modulation = get_temporal_modulation(audio_np, sample_rate)
     spectral_modulation = get_spectral_modulation(audio_np, sample_rate)
-    voice_onset_time = get_voice_onset_time(audio_np, sample_rate)
+    voice_onset_time = get_vot(audio_np, sample_rate)
     glottal_pulse_rate = get_glottal_pulse_rate(audio_np, sample_rate)
     psd_subbands = get_psd_subbands(audio_np, sample_rate)
     t13 = get_t13_voiced_to_silence(audio_np, sample_rate)
@@ -94,6 +94,7 @@ def compute_metrics(audio_np, sample_rate):
 
     # Prepare and return the metrics as a dict
     doc = {
+        "user_id": user_id,
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "f0_avg": float(f0_avg),
         "f0_std": float(f0_std),

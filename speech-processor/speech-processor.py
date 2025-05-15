@@ -34,9 +34,10 @@ def on_message(client, userdata, msg):
             data=base64.b64decode(audio_b64),
         )
         print("User recognition:", res.json())
+        user_id = res.json()["user_id"]
 
         # Compute all metrics
-        doc = compute_metrics(audio_np, sample_rate)
+        doc = compute_metrics(audio_np, sample_rate, user_id)
 
         # Insert metric record into DB
         collection.insert_one(doc)
