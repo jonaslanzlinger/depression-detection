@@ -14,7 +14,22 @@ encoder = VoiceEncoder()
 
 client = MongoClient("mongodb://mongodb:27017")
 db = client.iotsensing
-collection = db.user
+profiling_collection = db.user_profiling
+
+
+def load_user_profiles_from_db():
+    user_profiles.clear()
+    pointer = profiling_collection.find()
+    for record in pointer:
+        user_id = record["user_id"]
+        embedding = np.array(record["embedding"], dtype=np.float32)
+        if user_id in user_profiles:
+            user_profiles[user_id].append(embedding)
+        else:
+            user_profiles[user_id] = [embedding]
+
+
+load_user_profiles_from_db()
 
 
 def process_voice_bytes(audio_bytes: bytes):
@@ -36,7 +51,14 @@ def match_user(embedding):
 def add_new_user(embedding):
     user_id = len(user_profiles) + 1
     user_profiles[user_id] = [embedding]
+    save_user_embedding_to_db(user_id, embedding)
     return user_id
+
+
+def save_user_embedding_to_db(user_id, embedding):
+    profiling_collection.insert_one(
+        {"user_id": user_id, "embedding": embedding.tolist()}
+    )
 
 
 @app.post("/speech-user-recognition")
@@ -51,6 +73,7 @@ async def speech_user_recognition(request: Request):
 
         if matched_user:
             user_profiles[matched_user].append(embedding)
+            save_user_embedding_to_db(matched_user, embedding)
             return {"status": "recognized", "user_id": matched_user}
         else:
             new_user = add_new_user(embedding)
