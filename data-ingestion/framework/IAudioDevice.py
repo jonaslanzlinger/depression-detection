@@ -1,6 +1,7 @@
 from abc import abstractmethod
 import json
 from framework.IEdgeDevice import IEdgeDevice
+from framework.payloads.AudioPayload import AudioPayload
 import time
 import numpy as np
 from framework.audio_utils import encode_audio_to_base64
@@ -36,13 +37,11 @@ class IAudioDevice(IEdgeDevice):
             audio_np = filtered_data
         audio_b64 = encode_audio_to_base64(audio_np, self.sample_rate)
 
-        payload = {
-            "data": audio_b64,
-            "timestamp": time.time(),
-            "sample_rate": self.sample_rate,
-        }
+        payload = AudioPayload(
+            data=audio_b64, timestamp=time.time(), sample_rate=self.sample_rate
+        )
 
-        payload_str = json.dumps(payload)
+        payload_str = json.dumps(payload.to_dict())
         result = self.client.publish(self.topic, payload_str)
         result.wait_for_publish()
         print("Published audio segment")
