@@ -1,4 +1,4 @@
-from IAudioDevice import IAudioDevice
+from framework.IAudioDevice import IAudioDevice
 import numpy as np
 import pyaudio
 

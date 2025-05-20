@@ -1,9 +1,9 @@
 from abc import abstractmethod
 import json
-from IEdgeDevice import IEdgeDevice
+from framework.IEdgeDevice import IEdgeDevice
 import time
 import numpy as np
-from audio_utils import encode_audio_to_base64
+from framework.audio_utils import encode_audio_to_base64
 
 
 class IAudioDevice(IEdgeDevice):
