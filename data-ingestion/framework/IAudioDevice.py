@@ -44,13 +44,16 @@ class IAudioDevice(IEdgeDevice):
         payload_str = json.dumps(payload.to_dict())
         result = self.client.publish(self.topic, payload_str)
         result.wait_for_publish()
-        print("Published audio segment")
+        print("Published audio segment.")
 
     def run(self):
         print("Started sensing. Ctrl+C to stop.")
         try:
             while True:
                 raw = self.collect()
+                if raw is None:
+                    print("No data detected.")
+                    time.sleep(1.00)
                 filtered = self.filter(raw)
                 if filtered is not None:
                     self.transport(filtered)
