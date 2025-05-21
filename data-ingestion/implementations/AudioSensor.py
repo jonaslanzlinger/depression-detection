@@ -1,9 +1,9 @@
-from framework.IAudioDevice import IAudioDevice
+from framework.AbstractAudioDevice import AbstractAudioDevice
 import numpy as np
 import pyaudio
 
 
-class AudioSensor(IAudioDevice):
+class AudioSensor(AbstractAudioDevice):
     def __init__(
         self,
         sample_rate=16000,

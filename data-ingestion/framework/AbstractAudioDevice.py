@@ -1,13 +1,13 @@
 from abc import abstractmethod
 import json
-from framework.IEdgeDevice import IEdgeDevice
+from framework.AbstractEdgeDevice import AbstractEdgeDevice
 from framework.payloads.AudioPayload import AudioPayload
 import time
 import numpy as np
 from framework.audio_utils import encode_audio_to_base64
 
 
-class IAudioDevice(IEdgeDevice):
+class AbstractAudioDevice(AbstractEdgeDevice):
     def __init__(
         self,
         sample_rate=16000,

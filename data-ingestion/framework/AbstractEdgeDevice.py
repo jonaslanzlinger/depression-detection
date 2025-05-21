@@ -3,7 +3,7 @@ import paho.mqtt.client as mqtt
 from paho.mqtt.client import CallbackAPIVersion
 
 
-class IEdgeDevice(ABC):
+class AbstractEdgeDevice(ABC):
     def __init__(self, topic="miscellaneous", mqtthostname="localhost", mqttport=1883):
         self.topic = topic
 

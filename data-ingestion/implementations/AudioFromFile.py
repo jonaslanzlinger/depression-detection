@@ -1,10 +1,10 @@
-from framework.IAudioDevice import IAudioDevice
+from framework.AbstractAudioDevice import AbstractAudioDevice
 import numpy as np
 import soundfile as sf
 import librosa
 
 
-class AudioFromFile(IAudioDevice):
+class AudioFromFile(AbstractAudioDevice):
     def __init__(
         self,
         filepath=None,
