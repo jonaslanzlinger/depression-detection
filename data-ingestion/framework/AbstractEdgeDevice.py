@@ -12,15 +12,15 @@ class AbstractEdgeDevice(ABC):
         self.client.loop_start()
 
     @abstractmethod
-    def collect(self):
+    def collect(self) -> object:
         pass
 
     @abstractmethod
-    def filter(self, raw_data):
+    def filter(self, raw_data) -> object:
         pass
 
     @abstractmethod
-    def transport(self, filtered_data):
+    def transport(self, filtered_data) -> object:
         pass
 
     @abstractmethod

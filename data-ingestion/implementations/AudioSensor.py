@@ -1,6 +1,7 @@
 from framework.AbstractAudioDevice import AbstractAudioDevice
 import numpy as np
 import pyaudio
+from framework.payloads import AudioPayload
 
 
 class AudioSensor(AbstractAudioDevice):
@@ -33,14 +34,14 @@ class AudioSensor(AbstractAudioDevice):
             frames_per_buffer=self.frame_size,
         )
 
-    def collect(self):
+    def collect(self) -> np.ndarray:
         audio_chunk = self.stream.read(self.frame_size, exception_on_overflow=False)
         return np.frombuffer(audio_chunk, dtype=self._dtype_np)
 
-    def filter(self, raw_data):
+    def filter(self, raw_data) -> list[np.ndarray]:
         return raw_data
 
-    def transport(self, filtered_data):
+    def transport(self, filtered_data) -> AudioPayload:
         super().transport(filtered_data)
 
     def run(self):

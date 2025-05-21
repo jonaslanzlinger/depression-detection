@@ -23,14 +23,14 @@ class AbstractAudioDevice(AbstractEdgeDevice):
         self.dtype = dtype
 
     @abstractmethod
-    def collect(self):
+    def collect(self) -> np.ndarray:
         pass
 
     @abstractmethod
-    def filter(self, raw_data):
+    def filter(self, raw_data) -> list[np.ndarray]:
         pass
 
-    def transport(self, filtered_data):
+    def transport(self, filtered_data) -> AudioPayload:
         if isinstance(filtered_data, list):
             audio_np = np.concatenate(filtered_data)
         else:
@@ -45,6 +45,8 @@ class AbstractAudioDevice(AbstractEdgeDevice):
         result = self.client.publish(self.topic, payload_str)
         result.wait_for_publish()
         print("Published audio segment.")
+
+        return payload
 
     def run(self):
         print("Started sensing. Ctrl+C to stop.")

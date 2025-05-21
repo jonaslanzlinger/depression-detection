@@ -2,6 +2,7 @@ from framework.AbstractAudioDevice import AbstractAudioDevice
 import numpy as np
 import soundfile as sf
 import librosa
+from framework.payloads import AudioPayload
 
 
 class AudioFromFile(AbstractAudioDevice):
@@ -49,7 +50,7 @@ class AudioFromFile(AbstractAudioDevice):
         if self.audio_data.dtype != np.int16:
             self.audio_data = (self.audio_data * 32767).astype(np.int16)
 
-    def collect(self):
+    def collect(self) -> np.ndarray:
         if self.pointer >= len(self.audio_data):
             return None
 
@@ -58,10 +59,10 @@ class AudioFromFile(AbstractAudioDevice):
         self.pointer = end
         return chunk
 
-    def filter(self, raw_data):
+    def filter(self, raw_data) -> list[np.ndarray]:
         return raw_data
 
-    def transport(self, filtered_data):
+    def transport(self, filtered_data) -> AudioPayload:
         super().transport(filtered_data)
 
     def run(self):

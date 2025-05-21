@@ -1,6 +1,8 @@
 from implementations.AudioSensor import AudioSensor
 import torch
 from framework.audio_utils import int2float
+from framework.payloads import AudioPayload
+import numpy as np
 
 
 class VoiceSensor(AudioSensor):
@@ -32,10 +34,10 @@ class VoiceSensor(AudioSensor):
         self.buffer = []
         self.min_frames = 30
 
-    def collect(self):
+    def collect(self) -> np.ndarray:
         return super().collect()
 
-    def filter(self, raw_data):
+    def filter(self, raw_data) -> list[np.ndarray]:
         audio_float32 = int2float(raw_data)
         confidence = self.vad_model(
             torch.from_numpy(audio_float32), self.sample_rate
@@ -54,7 +56,7 @@ class VoiceSensor(AudioSensor):
                 self.buffer.clear()
                 return None
 
-    def transport(self, filtered_data):
+    def transport(self, filtered_data) -> AudioPayload:
         super().transport(filtered_data)
 
     def run(self):

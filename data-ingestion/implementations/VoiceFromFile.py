@@ -2,6 +2,7 @@ from implementations.AudioFromFile import AudioFromFile
 import torch
 import numpy as np
 from framework.audio_utils import int2float
+from framework.payloads import AudioPayload
 
 
 class VoiceFromFile(AudioFromFile):
@@ -35,10 +36,10 @@ class VoiceFromFile(AudioFromFile):
         self.buffer = []
         self.min_frames = 30
 
-    def collect(self):
+    def collect(self) -> np.ndarray:
         return super().collect()
 
-    def filter(self, raw_data):
+    def filter(self, raw_data) -> list[np.ndarray]:
         confidence = 0
 
         # skip the last chunk, if too short for silero-vad (self.frame_size = 512)
@@ -61,7 +62,7 @@ class VoiceFromFile(AudioFromFile):
                 self.buffer.clear()
                 return None
 
-    def transport(self, filtered_data):
+    def transport(self, filtered_data) -> AudioPayload:
         super().transport(filtered_data)
 
     def run(self):
