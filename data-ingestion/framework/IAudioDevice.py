@@ -54,6 +54,7 @@ class IAudioDevice(IEdgeDevice):
                 if raw is None:
                     print("No data detected.")
                     time.sleep(1.00)
+                    continue
                 filtered = self.filter(raw)
                 if filtered is not None:
                     self.transport(filtered)
