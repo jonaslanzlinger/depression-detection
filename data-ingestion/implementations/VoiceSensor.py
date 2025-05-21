@@ -61,7 +61,4 @@ class VoiceSensor(AudioSensor):
         super().run()
 
     def stop(self):
-        self.stream.stop_stream()
-        self.stream.close()
-        self.pyaudio_instance.terminate()
         super().stop()
