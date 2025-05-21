@@ -1,0 +1,8 @@
+from adapters.outbound.MongoUserRepositoryAdapter import MongoUserRepositoryAdapter
+from core.use_cases.UserRecognitionUseCase import UserRecognitionUseCase
+from adapters.inbound.RestUserProfilingAdapter import create_service
+
+repository = MongoUserRepositoryAdapter()
+user_recognition_use_case = UserRecognitionUseCase(repository)
+
+app = create_service(user_recognition_use_case)
