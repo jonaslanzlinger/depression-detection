@@ -1,6 +1,7 @@
 from framework.IAudioDevice import IAudioDevice
 import numpy as np
 import soundfile as sf
+import librosa
 
 
 class AudioFromFile(IAudioDevice):
@@ -33,6 +34,14 @@ class AudioFromFile(IAudioDevice):
 
     def _load_file(self):
         audio_np, sr = sf.read(self.filepath)
+
+        # resample, if sample rate is not 16000
+        if sr != 16000:
+            audio_np = librosa.resample(
+                audio_np.astype(np.float32), orig_sr=sr, target_sr=16000
+            )
+            sr = 16000
+
         if audio_np.ndim > 1:
             audio_np = np.mean(audio_np, axis=1)
         self.audio_data = audio_np
