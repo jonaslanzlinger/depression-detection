@@ -20,11 +20,13 @@ class UserRecognitionUseCase:
         if matched_user:
             self.user_profiles[matched_user].append(embedding)
             self.repository.save_user_embedding(matched_user, embedding)
+            print(f"User {matched_user} recognized.")
             return {"status": "recognized", "user_id": matched_user}
         else:
             new_user = len(self.user_profiles) + 1
             self.user_profiles[new_user] = [embedding]
             self.repository.save_user_embedding(new_user, embedding)
+            print(f"New user {new_user} created.")
             return {"status": "new_user_created", "user_id": new_user}
 
     def _match_user(self, embedding):
