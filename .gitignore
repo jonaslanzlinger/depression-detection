@@ -17,3 +17,7 @@ dashboard/src/environments/*.ts
 dashboard/npm-debug.log*
 dashboard/yarn-debug.log*
 dashboard/yarn-error.log*
+
+# exclude myprosody temp files
+processing_layer/metrics_computation/voice_metrics/core/myprosody/myprosody/dataset/audioFiles/temp.wav
+processing_layer/metrics_computation/voice_metrics/core/myprosody/myprosody/dataset/audioFiles/temp.TextGrid
