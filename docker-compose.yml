@@ -25,6 +25,35 @@ services:
       depends_on:
          - mongodb
 
+   user_profiling:
+      build:
+         context: ./processing_layer/user_profiling
+         dockerfile: Dockerfile
+      ports:
+         - "8000:8000"
+      volumes:
+         - ./processing_layer/user_profiling:/app
+      depends_on:
+         - mongodb
+
+   voice_metrics:
+      build:
+         context: ./processing_layer/metrics_computation/voice_metrics
+         dockerfile: Dockerfile
+      volumes:
+         - ./processing_layer/metrics_computation/voice_metrics:/app
+      depends_on:
+         - mqtt
+         - user_profiling
+         - mongodb
+
+   temporal-context:
+      build: ./temporal-context
+      ports:
+         - "8082:8082"
+      depends_on:
+         - mongodb
+
    streamlit:
       build:
          context: ./streamlit-app
@@ -35,34 +64,6 @@ services:
          - mongodb
       environment:
          - PYTHONBUFFERED=1
-
-   speech-processor:
-      build:
-         context: ./speech-processor
-         dockerfile: Dockerfile
-      volumes:
-         - ./speech-processor:/app
-      depends_on:
-         - mqtt
-         - mongodb
-
-   user-recognition:
-      build:
-         context: ./user-recognition
-         dockerfile: Dockerfile
-      ports:
-         - "8000:8000"
-      volumes:
-         - ./user-recognition:/app
-      depends_on:
-         - mongodb
-
-   temporal-context:
-      build: ./temporal-context
-      ports:
-         - "8082:8082"
-      depends_on:
-         - mongodb
 
 volumes:
    mongo_data:
