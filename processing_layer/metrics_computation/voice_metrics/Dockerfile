@@ -22,11 +22,9 @@ COPY requirements.txt .
 RUN grep -v "praat-parselmouth" requirements.txt > temp_requirements.txt
 RUN pip install --no-cache-dir -r temp_requirements.txt
 
-RUN git clone https://github.com/Shahabks/myprosody.git /myprosody \
-    && sed -i 's/\t/    /g' /myprosody/myprosody.py
-ENV PYTHONPATH="/myprosody:${PYTHONPATH}"
-
 RUN apt-get update && apt-get install -y praat
+
+ENV PYTHONPATH="/app/core/myprosody:${PYTHONPATH}"
 
 WORKDIR /app
 COPY . .
