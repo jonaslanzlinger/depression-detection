@@ -21,3 +21,6 @@ dashboard/yarn-error.log*
 # exclude myprosody temp files
 processing_layer/metrics_computation/voice_metrics/core/myprosody/myprosody/dataset/audioFiles/temp.wav
 processing_layer/metrics_computation/voice_metrics/core/myprosody/myprosody/dataset/audioFiles/temp.TextGrid
+
+# exclude ex_files
+ex_files
