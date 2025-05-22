@@ -13,6 +13,10 @@ class MongoPersistenceAdapter(PersistencePort):
         self.db = self.client[db_name]
         self.collection = self.db[collection_name]
 
-    def save_metrics(self, metrics: dict) -> None:
-        result = self.collection.insert_one(metrics)
-        print(f"Metrics saved to DB with _id: {result.inserted_id}")
+    def save_metrics(self, metrics: list[dict]) -> None:
+        if not metrics:
+            print("No metrics to save.")
+            return
+
+        result = self.collection.insert_many(metrics)
+        print(f"Saved {len(result.inserted_ids)} metric records to DB.")
