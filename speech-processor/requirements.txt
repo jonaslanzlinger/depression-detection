@@ -1,7 +1,0 @@
-paho-mqtt
-pymongo
-requests
-python-socketio
-numpy
-librosa
-opensmile
