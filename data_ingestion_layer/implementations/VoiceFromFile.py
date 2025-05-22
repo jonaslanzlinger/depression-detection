@@ -34,7 +34,7 @@ class VoiceFromFile(AudioFromFile):
         self.vad_iterator = VADIterator(model)
         self.voiced_confidences = []
         self.buffer = []
-        self.min_frames = 30
+        self.min_frames = 50
 
     def collect(self) -> np.ndarray:
         return super().collect()
