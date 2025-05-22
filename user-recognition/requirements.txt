@@ -1,6 +1,0 @@
-fastapi
-uvicorn
-numpy
-soundfile
-resemblyzer
-pymongo
