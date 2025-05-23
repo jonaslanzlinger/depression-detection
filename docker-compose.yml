@@ -25,14 +25,14 @@ services:
       depends_on:
          - mongodb
 
-   user_profiling:
+   voice_profiling:
       build:
-         context: ./processing_layer/user_profiling
+         context: ./processing_layer/user_profiling/voice_profiling
          dockerfile: Dockerfile
       ports:
          - "8000:8000"
       volumes:
-         - ./processing_layer/user_profiling:/app
+         - ./processing_layer/user_profiling/voice_profiling:/app
       depends_on:
          - mongodb
 
@@ -44,7 +44,7 @@ services:
          - ./processing_layer/metrics_computation/voice_metrics:/app
       depends_on:
          - mqtt
-         - user_profiling
+         - voice_profiling
          - mongodb
 
    temporal-context:

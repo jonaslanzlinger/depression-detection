@@ -7,7 +7,7 @@ class MongoUserRepositoryAdapter(UserRepositoryPort):
     def __init__(self):
         client = MongoClient("mongodb://mongodb:27017")
         self.db = client["iotsensing"]
-        self.collection = self.db["user_profiling"]
+        self.collection = self.db["voice_profiling"]
 
     def load_all_user_embeddings(self) -> dict:
         profiles = {}

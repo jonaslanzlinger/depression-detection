@@ -1,16 +1,17 @@
 import numpy as np
 from resemblyzer import VoiceEncoder
 from audio_utils import wav_bytes_to_np_float32
+from ports.UserRepositoryPort import UserRepositoryPort
 
 
-class UserRecognitionUseCase:
-    def __init__(self, repository, similarity_threshold=0.7):
+class UserRecognitionAudioUseCase:
+    def __init__(self, repository: UserRepositoryPort, similarity_threshold=0.7):
         self.repository = repository
         self.similarity_threshold = similarity_threshold
         self.user_profiles = self.repository.load_all_user_embeddings()
         self.encoder = VoiceEncoder()
 
-    def recognize(self, audio_bytes: bytes) -> dict:
+    def recognize_user(self, audio_bytes: bytes) -> dict:
         wav, _ = wav_bytes_to_np_float32(audio_bytes)
         embedding = np.array(
             self.encoder.embed_utterance(wav).tolist(), dtype=np.float32
