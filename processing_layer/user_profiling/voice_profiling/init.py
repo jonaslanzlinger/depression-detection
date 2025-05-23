@@ -1,8 +1,8 @@
 from adapters.outbound.MongoUserRepositoryAdapter import MongoUserRepositoryAdapter
-from processing_layer.user_profiling.voice_profiling.core.use_cases.UserRecognitionAudioUseCase import (
+from core.use_cases.UserRecognitionAudioUseCase import (
     UserRecognitionAudioUseCase,
 )
-from processing_layer.user_profiling.voice_profiling.adapters.inbound.RestUserRecognitionAudioAdapter import (
+from adapters.inbound.RestUserRecognitionAudioAdapter import (
     create_service,
 )
 
