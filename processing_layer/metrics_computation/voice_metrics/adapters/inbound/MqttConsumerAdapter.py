@@ -1,9 +1,15 @@
-class MqttAdapter:
+from ports.ConsumerPort import ConsumerPort
+
+
+class MqttConsumerAdapter(ConsumerPort):
     def __init__(self, mqtt_client):
         self.client = mqtt_client
         self.topic_handlers = {}
 
-    def register_handler(self, topic, handler):
+        self.client.on_connect = self.on_connect
+        self.client.on_message = self.on_message
+
+    def register_handler(self, topic, handler: callable):
         if topic not in self.topic_handlers:
             self.topic_handlers[topic] = []
             self.client.subscribe(topic)
@@ -25,3 +31,7 @@ class MqttAdapter:
                 handler(msg.topic, msg.payload)
         except Exception as e:
             print("Error processing message:", e)
+
+    def start(self):
+        print("Starting MQTT adapter loop")
+        self.client.loop_forever()

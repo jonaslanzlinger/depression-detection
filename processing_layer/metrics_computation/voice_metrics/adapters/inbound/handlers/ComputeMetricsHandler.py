@@ -1,8 +1,9 @@
 import json
 import base64
+from adapters.inbound.handlers.Handler import Handler
 
 
-class ComputeMetricsHandler:
+class ComputeMetricsHandler(Handler):
     def __init__(self, use_case):
         self.use_case = use_case
 
