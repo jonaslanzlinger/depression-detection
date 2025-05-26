@@ -1,14 +1,14 @@
-from fastapi import FastAPI, Request, HTTPException, Query
+from fastapi import APIRouter, Request, HTTPException, Query
 from datetime import date
 from typing import Optional
 import logging, traceback
 from core.use_cases.AggregateMetricsUseCase import AggregateMetricsUseCase
 
 
-def create_service(use_case: AggregateMetricsUseCase):
-    app = FastAPI()
+def create_service_aggregate_metrics(use_case: AggregateMetricsUseCase):
+    router = APIRouter()
 
-    @app.get("/aggregate_metrics")
+    @router.get("/aggregate_metrics")
     async def aggregate_metrics(
         user_id: int = Query(...),
         start_date: Optional[date] = Query(None),
@@ -27,4 +27,4 @@ def create_service(use_case: AggregateMetricsUseCase):
             logging.error(traceback.format_exc())
             raise HTTPException(status_code=500, detail=str(e))
 
-    return app
+    return router
