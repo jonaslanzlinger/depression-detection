@@ -10,11 +10,11 @@ class MongoPersistenceAdapter(PersistencePort):
         self,
         mongo_url="mongodb://mongodb:27017",
         db_name="iotsensing",
-        collection_name="metric",
     ):
         self.client = MongoClient(mongo_url)
         self.db = self.client[db_name]
-        self.collection = self.db[collection_name]
+        self.collection_metrics = self.db["metrics"]
+        self.collection_aggregated_daily_metrics = self.db["aggregated_daily_metrics"]
 
     def get_metrics_by_user(
         self,
@@ -39,7 +39,7 @@ class MongoPersistenceAdapter(PersistencePort):
         if metric_name:
             query["metric_name"] = metric_name
 
-        docs = self.collection.find(query)
+        docs = self.collection_metrics.find(query)
 
         return [
             MetricRecord(
@@ -51,3 +51,9 @@ class MongoPersistenceAdapter(PersistencePort):
             )
             for doc in docs
         ]
+
+    def save_flattened_aggregated_daily_metrics(self, records):
+        if not records:
+            return
+
+        self.collection_aggregated_daily_metrics.insert_many(records)

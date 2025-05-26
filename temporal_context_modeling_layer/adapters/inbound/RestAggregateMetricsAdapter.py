@@ -16,14 +16,13 @@ def create_service(use_case: AggregateMetricsUseCase):
         metric_name: Optional[str] = Query(None),
     ):
         try:
-            records = use_case.aggregate_metrics(
+            aggregated_metrics = use_case.aggregate_metrics(
                 user_id=user_id,
                 start_date=start_date,
                 end_date=end_date,
                 metric_name=metric_name,
             )
-            # return [r.to_dict() for r in records]
-            return records
+            return aggregated_metrics
         except Exception as e:
             logging.error(traceback.format_exc())
             raise HTTPException(status_code=500, detail=str(e))

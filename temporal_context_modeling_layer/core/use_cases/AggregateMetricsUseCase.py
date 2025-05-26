@@ -1,6 +1,7 @@
 from ports.PersistencePort import PersistencePort
-from datetime import date
+from datetime import datetime, date, timezone
 from typing import Optional
+from core.services.aggregate_daily_metrics import aggregate_daily_metrics
 
 
 class AggregateMetricsUseCase:
@@ -20,4 +21,24 @@ class AggregateMetricsUseCase:
             end_date=end_date,
             metric_name=metric_name,
         )
-        return {"user_id": user_id, "test": "yoooo"}
+
+        aggregated_daily_metrics = aggregate_daily_metrics(metrics)
+
+        flattened_aggregated_daily_metrics = []
+        for date_str, metrics in aggregated_daily_metrics.items():
+            timestamp = datetime.fromisoformat(date_str).replace(tzinfo=timezone.utc)
+            for metric_name, value in metrics.items():
+                flattened_aggregated_daily_metrics.append(
+                    {
+                        "user_id": user_id,
+                        "timestamp": timestamp.isoformat(),
+                        "metric_name": metric_name,
+                        "metric_value": value,
+                    }
+                )
+
+        self.repository.save_flattened_aggregated_daily_metrics(
+            flattened_aggregated_daily_metrics
+        )
+
+        return aggregated_daily_metrics

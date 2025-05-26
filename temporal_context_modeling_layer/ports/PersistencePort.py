@@ -14,3 +14,7 @@ class PersistencePort(ABC):
         metric_name: Optional[str] = None,
     ) -> List[MetricRecord]:
         pass
+
+    @abstractmethod
+    def save_flattened_aggregated_daily_metrics(self, records: List[dict]) -> None:
+        pass

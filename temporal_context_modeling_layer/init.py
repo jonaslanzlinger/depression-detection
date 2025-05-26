@@ -8,5 +8,3 @@ records = persistence.get_metrics_by_user(user_id=1)
 use_case = AggregateMetricsUseCase(persistence)
 
 app = create_service(use_case)
-
-print(records)
