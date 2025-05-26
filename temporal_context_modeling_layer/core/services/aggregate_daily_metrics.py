@@ -7,7 +7,6 @@ def aggregate_daily_metrics(records: List[MetricRecord]) -> Dict[str, Dict[str, 
     if not records:
         return {}
 
-    # Build the DataFrame first
     df = pd.DataFrame(
         {
             "date": [r.timestamp.date().isoformat() for r in records],
@@ -16,14 +15,11 @@ def aggregate_daily_metrics(records: List[MetricRecord]) -> Dict[str, Dict[str, 
         }
     )
 
-    # Convert to numeric and drop non-numeric
     df["metric_value"] = pd.to_numeric(df["metric_value"], errors="coerce")
     df = df.dropna(subset=["metric_value"])
 
-    # Group and compute mean
     grouped = df.groupby(["date", "metric_name"])["metric_value"].mean().reset_index()
 
-    # Format result into nested dict
     result = {}
     for _, row in grouped.iterrows():
         date_str = row["date"]

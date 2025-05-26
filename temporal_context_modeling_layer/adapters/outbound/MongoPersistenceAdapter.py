@@ -52,8 +52,17 @@ class MongoPersistenceAdapter(PersistencePort):
             for doc in docs
         ]
 
-    def save_flattened_aggregated_daily_metrics(self, records):
+    def save_flattened_aggregated_daily_metrics(self, records: List[dict]) -> None:
         if not records:
             return
 
+        user_id = records[0]["user_id"]
+        timestamps = list({r["timestamp"] for r in records})
+
+        self.collection_aggregated_daily_metrics.delete_many(
+            {
+                "user_id": user_id,
+                "timestamp": {"$in": timestamps},
+            }
+        )
         self.collection_aggregated_daily_metrics.insert_many(records)
