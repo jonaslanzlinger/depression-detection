@@ -26,6 +26,9 @@ from core.extractors.myprosody_extractors import MyprosodyMetrics
 
 
 class MetricsComputationService:
+    def __init__(self):
+        self.day_counter = 0
+
     def compute(self, audio_bytes, user_id) -> list[dict]:
 
         # Convert audio data into correct format
@@ -119,9 +122,12 @@ class MetricsComputationService:
 
         flat_metrics.update(myprosody_metrics)
 
-        timestamp = datetime.now(timezone.utc).isoformat()
+        # timestamp = datetime.now(timezone.utc).isoformat()
         # utiliy funcation for simulating data ingestion timestamps
-        # timestamp = (datetime.now(timezone.utc) + timedelta(days=26)).isoformat()
+        timestamp = (
+            datetime.now(timezone.utc) + timedelta(days=self.day_counter)
+        ).isoformat()
+        self.day_counter += 1
 
         # Convert all metrics to a list of records
         metric_records = [

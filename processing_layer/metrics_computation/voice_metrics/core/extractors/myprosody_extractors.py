@@ -64,28 +64,28 @@ def myprosody_extractors_handler(
 
     sf.write(temp_wav_path, audio_np, sample_rate, subtype="PCM_16")
 
-    with contextlib.redirect_stdout(io.StringIO()):
-        results_df = mysp.mysptotal(temp_wav_name, MYPROSODY_DIR_PATH)
-        pause_count = mysp.mysppaus(temp_wav_name, MYPROSODY_DIR_PATH)
-        pause_duration = mysp.myprosody(temp_wav_name, MYPROSODY_DIR_PATH)
+    results_df = mysp.mysptotal(temp_wav_name, MYPROSODY_DIR_PATH)
+    if results_df is None or results_df.empty:
+        return {}
 
     results = results_df.iloc[:, 0].tolist()
 
-    expected_len = 14
-    if len(results) < expected_len:
-        print(f"Warning: expected {expected_len} results, got {len(results)}")
-        results += [None] * (expected_len - len(results))  # pad with Nones
+    if len(results) < len(MYPROSODY_RESULT_KEYS):
+        results += [None] * (len(MYPROSODY_RESULT_KEYS) - len(results))
 
-    result_dict = dict(zip(MYPROSODY_RESULT_KEYS[:expected_len], results))
-    result_dict["pause_count"] = pause_count
+    result_dict = dict(zip(MYPROSODY_RESULT_KEYS, results))
+    result_dict["pause_count"] = result_dict.get("number_of_pauses")
 
-    csv_path = f"{MYPROSODY_DIR_PATH}/dataset/datanewchi22.csv"
     try:
-        pause_duration_df = pd.read_csv(csv_path, header=None)
-        pause_duration = float(pause_duration_df.iloc[0, 0])
-        result_dict["pause_duration"] = pause_duration
-    except Exception as e:
-        print(f"Warning: Failed to read pause duration: {e}")
-        result_dict["pause_duration"] = None
+        pause_duration = float(result_dict["original_duration"]) - float(
+            result_dict["speaking_duration"]
+        )
+    except (KeyError, TypeError, ValueError):
+        pause_duration = None
 
-    return {metric.value: result_dict[metric.value] for metric in myprosody_metrics}
+    result_dict["pause_duration"] = pause_duration
+
+    return {
+        metric.value: result_dict.get(metric.value, None)
+        for metric in myprosody_metrics
+    }

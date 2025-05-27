@@ -8,6 +8,8 @@ from scipy.stats import binom
 from scipy.stats import ks_2samp
 from scipy.stats import ttest_ind
 import os
+import contextlib
+import io
 
 
 def run_praat_file(m, p):
@@ -222,30 +224,47 @@ def mysptotal(m, p):
     """
     Overview
     """
-    z2 = run_praat_file(m, p)
-    z3 = np.array(z2)
-    z4 = np.array(z3)[np.newaxis]
-    z5 = z4.T
-    dataset = pd.DataFrame(
-        {
-            "number_ of_syllables": z5[0, :],
-            "number_of_pauses": z5[1, :],
-            "rate_of_speech": z5[2, :],
-            "articulation_rate": z5[3, :],
-            "speaking_duration": z5[4, :],
-            "original_duration": z5[5, :],
-            "balance": z5[6, :],
-            "f0_mean": z5[7, :],
-            "f0_std": z5[8, :],
-            "f0_median": z5[9, :],
-            "f0_min": z5[10, :],
-            "f0_max": z5[11, :],
-            "f0_quantile25": z5[12, :],
-            "f0_quan75": z5[13, :],
-        }
-    )
-    print(dataset.T)
-    return dataset.T
+    try:
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(
+            io.StringIO()
+        ):
+            z2 = run_praat_file(m, p)
+
+        # Catch known error messages returned as fake data
+        if len(z2) < 14 or "try" in z2 or "noisy" in z2:
+            print("Praat returned an error message or incomplete result.")
+            return None
+
+        # Proceed if z2 seems valid
+        z3 = np.array(z2)
+        z4 = np.array(z3)[np.newaxis]
+        z5 = z4.T
+
+        dataset = pd.DataFrame(
+            {
+                "number_ of_syllables": z5[0, :],
+                "number_of_pauses": z5[1, :],
+                "rate_of_speech": z5[2, :],
+                "articulation_rate": z5[3, :],
+                "speaking_duration": z5[4, :],
+                "original_duration": z5[5, :],
+                "balance": z5[6, :],
+                "f0_mean": z5[7, :],
+                "f0_std": z5[8, :],
+                "f0_median": z5[9, :],
+                "f0_min": z5[10, :],
+                "f0_max": z5[11, :],
+                "f0_quantile25": z5[12, :],
+                "f0_quan75": z5[13, :],
+            }
+        )
+
+        print(dataset.T)
+        return dataset.T
+
+    except Exception as e:
+        print(f"mysptotal() failed: {e}")
+        return None
 
 
 def mysppron(m, p):
