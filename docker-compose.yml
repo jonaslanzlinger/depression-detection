@@ -15,6 +15,7 @@ services:
          - "27017:27017"
       volumes:
          - mongo_data:/data/db
+      command: mongod --setParameter diagnosticDataCollectionEnabled=false
 
    mongo-express:
       image: mongo-express
@@ -47,23 +48,32 @@ services:
          - voice_profiling
          - mongodb
 
-   temporal-context:
-      build: ./temporal-context
+   temporal_context_modeling_layer:
+      build:
+         context: ./temporal_context_modeling_layer
+         dockerfile: Dockerfile
       ports:
          - "8082:8082"
       depends_on:
          - mongodb
 
-   streamlit:
-      build:
-         context: ./streamlit-app
-         dockerfile: Dockerfile
-      ports:
-         - "8501:8501"
-      depends_on:
-         - mongodb
-      environment:
-         - PYTHONBUFFERED=1
+   # temporal-context:
+   #    build: ./temporal-context
+   #    ports:
+   #       - "8082:8082"
+   #    depends_on:
+   #       - mongodb
+
+   # streamlit:
+   #    build:
+   #       context: ./streamlit-app
+   #       dockerfile: Dockerfile
+   #    ports:
+   #       - "8501:8501"
+   #    depends_on:
+   #       - mongodb
+   #    environment:
+   #       - PYTHONBUFFERED=1
 
 volumes:
    mongo_data:

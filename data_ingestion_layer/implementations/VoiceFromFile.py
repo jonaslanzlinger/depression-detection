@@ -34,7 +34,8 @@ class VoiceFromFile(AudioFromFile):
         self.vad_iterator = VADIterator(model)
         self.voiced_confidences = []
         self.buffer = []
-        self.min_frames = 50
+        # praat-parselmouth needs chunks of >5 seconds for prosody metrics computation
+        self.min_frames = 160
 
     def collect(self) -> np.ndarray:
         return super().collect()
@@ -59,7 +60,6 @@ class VoiceFromFile(AudioFromFile):
                 self.buffer.clear()
                 return speech_segment
             else:
-                self.buffer.clear()
                 return None
 
     def transport(self, filtered_data) -> AudioPayload:

@@ -11,7 +11,7 @@ if __name__ == "__main__":
         filepath="ex_files/test-voice-1.wav", topic="audio/mic1"
     )
     voice_from_file = VoiceFromFile(
-        filepath="ex_files/test-voice-4.wav", topic="voice/mic1"
+        filepath="ex_files/customdataset/may-27.wav", topic="voice/mic1"
     )
 
     voice_from_file.run()

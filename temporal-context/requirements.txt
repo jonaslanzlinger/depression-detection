@@ -1,7 +1,0 @@
-fastapi
-uvicorn
-pymongo
-hmmlearn
-pandas
-numpy
-scikit-learn

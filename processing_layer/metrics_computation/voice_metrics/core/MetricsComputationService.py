@@ -1,6 +1,6 @@
 import numpy as np
 from audio_utils import audio_bytes_to_nparray
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import opensmile
 from core.extractors.f0 import get_f0_avg, get_f0_std, get_f0_range
 from core.extractors.hnr import get_hnr_mean
@@ -119,13 +119,15 @@ class MetricsComputationService:
 
         flat_metrics.update(myprosody_metrics)
 
-        timestmap = datetime.now(timezone.utc).isoformat()
+        timestamp = datetime.now(timezone.utc).isoformat()
+        # utiliy funcation for simulating data ingestion timestamps
+        # timestamp = (datetime.now(timezone.utc) + timedelta(days=26)).isoformat()
 
         # Convert all metrics to a list of records
         metric_records = [
             {
                 "user_id": user_id,
-                "timestamp": timestmap,
+                "timestamp": timestamp,
                 "metric_name": key,
                 "metric_value": value,
                 "origin": "metrics_computation",
