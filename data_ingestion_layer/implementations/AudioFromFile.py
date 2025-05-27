@@ -45,10 +45,16 @@ class AudioFromFile(AbstractAudioDevice):
 
         if audio_np.ndim > 1:
             audio_np = np.mean(audio_np, axis=1)
-        self.audio_data = audio_np
+
+        max_val = np.max(np.abs(audio_np))
+        if max_val > 0:
+            audio_np = (audio_np / max_val) * 0.9  # Scale to 90% peak
+
+        self.audio_data = audio_np.astype(np.float32)
+        # prepare int16 version for saving or MyProsody
+        self.audio_data = (self.audio_data * 32767).astype(np.int16)
+
         self.sample_rate = int(sr)
-        if self.audio_data.dtype != np.int16:
-            self.audio_data = (self.audio_data * 32767).astype(np.int16)
 
     def collect(self) -> np.ndarray:
         if self.pointer >= len(self.audio_data):
