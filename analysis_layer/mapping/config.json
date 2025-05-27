@@ -1,0 +1,305 @@
+{
+   "1_depressed_mood": {
+      "metrics": {
+         "formant_f1_frequencies_mean": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive"
+         },
+         "snr": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         },
+         "f0_avg": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         },
+         "f0_std": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         },
+         "spectral_flatness": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive"
+         },
+         "rate_of_speech": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         },
+         "articulation_rate": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         },
+         "pause_duration": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive"
+         },
+         "pause_count": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive"
+         },
+         "f2_transition_speed": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         },
+         "jitter": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive"
+         },
+         "shimmer": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive"
+         }
+      }
+   },
+
+   "2_loss_of_interest": {
+      "metrics": {
+         "f0_std": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         },
+         "f0_range": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         },
+         "jitter": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive"
+         },
+         "shimmer": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive"
+         },
+         "rms_energy_range": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         },
+         "rms_energy_std": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         }
+      }
+   },
+
+   "3_significant_weight_changes": {
+      "metrics": {
+         "f0_avg": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         },
+         "jitter": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive"
+         },
+         "shimmer": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive"
+         },
+         "hnr_mean": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         }
+      }
+   },
+
+   "4_insomnia_hypersomnia": {
+      "metrics": {
+         "hnr_mean": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         },
+         "temporal_modulation": {
+            "weight": 1.0,
+            "correlation": "nonlinear",
+            "direction": "anomaly"
+         },
+         "spectral_modulation": {
+            "weight": 1.0,
+            "correlation": "nonlinear",
+            "direction": "anomaly"
+         }
+      }
+   },
+
+   "5_psychomotor_retardation_agitation": {
+      "metrics": {
+         "f0_avg": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         },
+         "f0_std": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         },
+         "spectral_flatness": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive"
+         },
+         "rate_of_speech": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         },
+         "articulation_rate": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         },
+         "pause_duration": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive"
+         },
+         "pause_count": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive"
+         },
+         "f2_transition_speed": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         },
+         "jitter": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive"
+         },
+         "shimmer": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive"
+         },
+         "voice_onset_time": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive"
+         }
+      }
+   },
+
+   "6_fatigue_loss_of_energy": {
+      "metrics": {
+         "temporal_modulation": {
+            "weight": 1.0,
+            "correlation": "nonlinear",
+            "direction": "anomaly"
+         },
+         "spectral_modulation": {
+            "weight": 1.0,
+            "correlation": "nonlinear",
+            "direction": "anomaly"
+         }
+      }
+   },
+
+   "7_feelings_of_worthlessness_guilt": {
+      "metrics": {}
+   },
+
+   "8_diminished_ability_to_think_or_concentrate": {
+      "metrics": {
+         "f0_std": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         },
+         "f0_range": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         },
+         "pause_duration": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive"
+         },
+         "pause_count": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive"
+         },
+         "jitter": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive"
+         },
+         "shimmer": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive"
+         },
+         "rms_energy_range": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         },
+         "rms_energy_std": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         },
+         "glottal_pulse_rate": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         }
+      }
+   },
+
+   "9_recurrent_thoughts_of_death_or_being_suicidal": {
+      "metrics": {
+         "psd-4": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "both"
+         },
+         "psd-5": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "both"
+         },
+         "psd-7": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "both"
+         },
+         "t13": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive"
+         },
+         "voiced16_20": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative"
+         }
+      }
+   }
+}
