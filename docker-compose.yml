@@ -57,16 +57,25 @@ services:
       depends_on:
          - mongodb
 
-   # streamlit:
-   #    build:
-   #       context: ./streamlit-app
-   #       dockerfile: Dockerfile
-   #    ports:
-   #       - "8501:8501"
-   #    depends_on:
-   #       - mongodb
-   #    environment:
-   #       - PYTHONBUFFERED=1
+   analysis_layer:
+      build:
+         context: ./analysis_layer
+         dockerfile: Dockerfile
+      ports:
+         - "8083:8083"
+      depends_on:
+         - mongodb
+
+   dashboard_layer:
+      build:
+         context: ./dashboard_layer
+         dockerfile: Dockerfile
+      ports:
+         - "8084:8084"
+      depends_on:
+         - mongodb
+      environment:
+         - PYTHONBUFFERED=1
 
 volumes:
    mongo_data:
