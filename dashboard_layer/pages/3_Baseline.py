@@ -1,6 +1,7 @@
 import streamlit as st
 from pymongo import MongoClient
 import pandas as pd
+from utils.refresh_procedure import refresh_procedure
 
 st.title("Baseline")
 
@@ -22,7 +23,7 @@ def load_users():
 st.sidebar.title("Actions")
 
 if st.sidebar.button("🔄 Refresh Analysis"):
-    pass
+    refresh_procedure()
 
 st.sidebar.subheader("Select User")
 selected_user = st.sidebar.selectbox("User", load_users(), key="user_id")
