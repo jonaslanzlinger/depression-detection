@@ -7,17 +7,18 @@ st.title("Metrics")
 
 client = MongoClient("mongodb://mongodb:27017")
 db = client["iotsensing"]
+collection_raw_metrics = db["raw_metrics"]
 
 collections = {
-    "Raw Metrics": "metrics",
-    "Aggregated Metrics": "aggregated_daily_metrics",
-    "Contextual Metrics": "contextual_daily_metrics",
+    "Raw Metrics": "raw_metrics",
+    "Aggregated Metrics": "aggregated_metrics",
+    "Contextual Metrics": "contextual_metrics",
 }
 
 
 @st.cache_data
 def load_users():
-    df = pd.DataFrame(collection.find())
+    df = pd.DataFrame(collection_raw_metrics.find())
     return df["user_id"].unique()
 
 
@@ -52,18 +53,25 @@ else:
     if "timestamp" in df.columns:
         df["timestamp"] = pd.to_datetime(df["timestamp"])
 
-        if collection_name == "contextual_daily_metrics":
-            chart_data = df.pivot_table(
-                index="timestamp",
-                columns="metric_name",
-                values="metric_contextual_value",
-            )
-        else:
+        if collection_name == "raw_metrics":
             chart_data = df.pivot_table(
                 index="timestamp",
                 columns="metric_name",
                 values="metric_value",
             )
+        if collection_name == "aggregated_metrics":
+            chart_data = df.pivot_table(
+                index="timestamp",
+                columns="metric_name",
+                values="aggregated_value",
+            )
+        if collection_name == "contextual_metrics":
+            chart_data = df.pivot_table(
+                index="timestamp",
+                columns="metric_name",
+                values="contextual_value",
+            )
+
         st.line_chart(chart_data)
 
     st.dataframe(df.drop(columns=["_id"]))
