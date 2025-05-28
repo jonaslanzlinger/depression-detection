@@ -26,13 +26,13 @@ def refresh_procedure():
         res.raise_for_status()
         st.success("Metrics contextualized.")
 
-        # res = requests.get(ANALYZE_METRICS_URL, params={"user_id": user_id})
-        # res.raise_for_status()
-        # st.success("Metrics analyzed.")
+        res = requests.get(ANALYZE_METRICS_URL, params={"user_id": user_id})
+        res.raise_for_status()
+        st.success("Metrics analyzed.")
 
-        # res = requests.get(DERIVE_INDICATOR_SCORES_URL, params={"user_id": user_id})
-        # res.raise_for_status()
-        # st.success("Indicator scores derived.")
+        res = requests.get(DERIVE_INDICATOR_SCORES_URL, params={"user_id": user_id})
+        res.raise_for_status()
+        st.success("Indicator scores derived.")
 
     except Exception as e:
         st.error(f"Failed to refresh analysis: {e}")

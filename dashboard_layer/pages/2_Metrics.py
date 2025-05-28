@@ -13,6 +13,7 @@ collections = {
     "Raw Metrics": "raw_metrics",
     "Aggregated Metrics": "aggregated_metrics",
     "Contextual Metrics": "contextual_metrics",
+    "Analyzed Metrics": "analyzed_metrics",
 }
 
 
@@ -70,6 +71,12 @@ else:
                 index="timestamp",
                 columns="metric_name",
                 values="contextual_value",
+            )
+        if collection_name == "analyzed_metrics":
+            chart_data = df.pivot_table(
+                index="timestamp",
+                columns="metric_name",
+                values="analyzed_value",
             )
 
         st.line_chart(chart_data)
