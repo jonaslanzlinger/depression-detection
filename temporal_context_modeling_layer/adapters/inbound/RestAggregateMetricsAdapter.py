@@ -1,6 +1,4 @@
-from fastapi import APIRouter, Request, HTTPException, Query
-from datetime import date
-from typing import Optional
+from fastapi import APIRouter, HTTPException, Query
 import logging, traceback
 from core.use_cases.AggregateMetricsUseCase import AggregateMetricsUseCase
 
@@ -9,19 +7,9 @@ def create_service_aggregate_metrics(use_case: AggregateMetricsUseCase):
     router = APIRouter()
 
     @router.get("/aggregate_metrics")
-    async def aggregate_metrics(
-        user_id: int = Query(...),
-        start_date: Optional[date] = Query(None),
-        end_date: Optional[date] = Query(None),
-        metric_name: Optional[str] = Query(None),
-    ):
+    async def aggregate_metrics(user_id: int = Query(...)):
         try:
-            aggregated_metrics = use_case.aggregate_metrics(
-                user_id=user_id,
-                start_date=start_date,
-                end_date=end_date,
-                metric_name=metric_name,
-            )
+            aggregated_metrics = use_case.aggregate_metrics(user_id)
             return aggregated_metrics
         except Exception as e:
             logging.error(traceback.format_exc())

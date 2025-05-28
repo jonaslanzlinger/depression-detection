@@ -2,55 +2,58 @@ from ports.PersistencePort import PersistencePort
 from core.services.temporal_context.SpikeDampenedEMA import SpikeDampenedEMA
 from core.services.temporal_context.HMM import HMM
 import pandas as pd
-from datetime import datetime
+from datetime import timedelta
 from typing import List
+from core.models.ContextualMetricRecord import ContextualMetricRecord
 
 
 class ComputeContextualMetricsUseCase:
-    def __init__(self, persistence: PersistencePort):
-        self.persistence = persistence
+    def __init__(self, repository: PersistencePort):
+        self.repository = repository
 
-    def compute(self, user_id: int, method: str = "ema") -> List[dict]:
-        metrics = self.persistence.get_aggregated_metrics_by_user(user_id)
+    def compute(
+        self, user_id: int, method: str = "ema"
+    ) -> List[ContextualMetricRecord]:
+
+        latest = self.repository.get_latest_contextual_metric_date(user_id)
+        start_date = None
+        if latest:
+            start_date = latest + timedelta(days=1)
+
+        metrics = self.repository.get_aggregated_metrics(user_id)
         if not metrics:
             return []
 
         df = pd.DataFrame(metrics)
-        df["date"] = pd.to_datetime(df["timestamp"]).dt.date
 
         daily = df.pivot_table(
-            index="date",
+            index="timestamp",
             columns="metric_name",
-            values="metric_value",
+            values="aggregated_value",
             aggfunc="mean",
         )
 
-        contextual_records = []
+        model = SpikeDampenedEMA() if method == "ema" else HMM()
 
-        if method == "ema":
-            model = SpikeDampenedEMA()
-        elif method == "hmm":
-            model = HMM()
-        else:
-            raise NotImplementedError(f"Contextualization method not supported.")
+        contextual_records = []
 
         for metric in daily.columns:
             values = daily[metric].ffill().bfill()
             baseline = model.compute(values.tolist())
             dev = abs(values - baseline)
 
-            for date, dev_val, base_val in zip(values.index, dev, baseline):
-                contextual_records.append(
-                    {
-                        "user_id": user_id,
-                        "timestamp": datetime.combine(
-                            date, datetime.min.time()
-                        ).isoformat(),
-                        "metric_name": metric,
-                        "metric_contextual_value": float(base_val),
-                        "metric_dev": float(dev_val),
-                    }
-                )
+            for timestamp, dev_val, base_val in zip(values.index, dev, baseline):
+                if start_date is None or timestamp >= start_date:
+                    contextual_records.append(
+                        ContextualMetricRecord(
+                            user_id=user_id,
+                            timestamp=timestamp,
+                            metric_name=metric,
+                            contextual_value=float(base_val),
+                            metric_dev=float(dev_val),
+                        )
+                    )
 
-        self.persistence.save_contextual_metrics(contextual_records)
-        return [{k: v for k, v in r.items() if k != "_id"} for r in contextual_records]
+        self.repository.save_contextual_metrics(contextual_records)
+
+        return contextual_records

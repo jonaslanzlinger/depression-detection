@@ -1,44 +1,30 @@
 from ports.PersistencePort import PersistencePort
-from datetime import datetime, date, timezone
-from typing import Optional
-from core.services.aggregate_daily_metrics import aggregate_daily_metrics
+from datetime import timedelta
+from typing import List
+from core.services.aggregate_metrics import aggregate_metrics
+from core.models.AggregatedMetricRecord import AggregatedMetricRecord
 
 
 class AggregateMetricsUseCase:
     def __init__(self, repository: PersistencePort):
         self.repository = repository
 
-    def aggregate_metrics(
-        self,
-        user_id: int,
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
-        metric_name: Optional[str] = None,
-    ):
-        metrics = self.repository.get_metrics_by_user(
-            user_id=user_id,
-            start_date=start_date,
-            end_date=end_date,
-            metric_name=metric_name,
+    def aggregate_metrics(self, user_id: int) -> List[AggregatedMetricRecord]:
+
+        latest = self.repository.get_latest_aggregated_metric_date(user_id)
+        start_date = None
+        if latest:
+            start_date = latest + timedelta(days=1)
+
+        metrics = self.repository.get_raw_metrics(
+            user_id=user_id, start_date=start_date
         )
 
-        aggregated_daily_metrics = aggregate_daily_metrics(metrics)
+        if not metrics:
+            return {}
 
-        flattened_aggregated_daily_metrics = []
-        for date_str, metrics in aggregated_daily_metrics.items():
-            timestamp = datetime.fromisoformat(date_str).replace(tzinfo=timezone.utc)
-            for metric_name, value in metrics.items():
-                flattened_aggregated_daily_metrics.append(
-                    {
-                        "user_id": user_id,
-                        "timestamp": timestamp.isoformat(),
-                        "metric_name": metric_name,
-                        "metric_value": value,
-                    }
-                )
+        aggregated_metrics = aggregate_metrics(metrics)
 
-        self.repository.save_flattened_aggregated_daily_metrics(
-            flattened_aggregated_daily_metrics
-        )
+        self.repository.save_aggregated_metrics(aggregated_metrics)
 
-        return aggregated_daily_metrics
+        return aggregated_metrics

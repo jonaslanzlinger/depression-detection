@@ -1,6 +1,8 @@
 from typing import List, Optional
-from datetime import datetime, date, timedelta
-from core.models.MetricRecord import MetricRecord
+from datetime import datetime
+from core.models.RawMetricRecord import RawMetricRecord
+from core.models.AggregatedMetricRecord import AggregatedMetricRecord
+from core.models.ContextualMetricRecord import ContextualMetricRecord
 from ports.PersistencePort import PersistencePort
 from pymongo import MongoClient
 
@@ -13,99 +15,113 @@ class MongoPersistenceAdapter(PersistencePort):
     ):
         self.client = MongoClient(mongo_url)
         self.db = self.client[db_name]
-        self.collection_metrics = self.db["metrics"]
-        self.collection_aggregated_daily_metrics = self.db["aggregated_daily_metrics"]
-        self.collection_contextual_daily_metrics = self.db["contextual_daily_metrics"]
+        self.collection_raw_metrics = self.db["raw_metrics"]
+        self.collection_aggregated_metrics = self.db["aggregated_metrics"]
+        self.collection_contextual_metrics = self.db["contextual_metrics"]
 
-    def get_metrics_by_user(
+    def get_latest_aggregated_metric_date(self, user_id: int) -> Optional[datetime]:
+        cursor = (
+            self.collection_aggregated_metrics.find({"user_id": user_id})
+            .sort("timestamp", -1)
+            .limit(1)
+        )
+        doc = next(cursor, None)
+
+        if doc:
+            return doc["timestamp"]
+        return None
+
+    def get_latest_contextual_metric_date(self, user_id: int) -> Optional[datetime]:
+        cursor = (
+            self.collection_contextual_metrics.find({"user_id": user_id})
+            .sort("timestamp", -1)
+            .limit(1)
+        )
+        doc = next(cursor, None)
+
+        if doc:
+            return doc["timestamp"]
+        return None
+
+    def get_raw_metrics(
         self,
         user_id: int,
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
-        metric_name: Optional[str] = None,
-    ) -> List[MetricRecord]:
+        start_date: Optional[datetime] = None,
+    ) -> List[RawMetricRecord]:
 
         query = {"user_id": user_id}
 
         if start_date:
-            start_dt = datetime.combine(start_date, datetime.min.time()).isoformat()
-            query.setdefault("timestamp", {})["$gte"] = start_dt
+            query["timestamp"] = {"$gte": start_date}
 
-        if end_date:
-            end_dt = datetime.combine(
-                end_date + timedelta(days=1), datetime.min.time()
-            ).isoformat()
-            query.setdefault("timestamp", {})["$lt"] = end_dt
-
-        if metric_name:
-            query["metric_name"] = metric_name
-
-        docs = self.collection_metrics.find(query)
+        docs = self.collection_raw_metrics.find(query)
 
         return [
-            MetricRecord(
+            RawMetricRecord(
                 user_id=doc["user_id"],
-                timestamp=datetime.fromisoformat(doc["timestamp"]),
+                timestamp=doc["timestamp"],
                 metric_name=doc["metric_name"],
                 metric_value=doc["metric_value"],
-                origin=doc.get("origin", "unknown"),
             )
             for doc in docs
         ]
 
-    def save_flattened_aggregated_daily_metrics(self, records: List[dict]) -> None:
+    def save_aggregated_metrics(self, records: List[AggregatedMetricRecord]) -> None:
         if not records:
             return
+        dict_records = [r.to_dict() for r in records]
+        self.collection_aggregated_metrics.insert_many(dict_records)
+        print(f"Inserted {len(dict_records)} aggregated metrics records.")
 
-        user_id = records[0]["user_id"]
-        timestamps = list({r["timestamp"] for r in records})
-
-        self.collection_aggregated_daily_metrics.delete_many(
-            {
-                "user_id": user_id,
-                "timestamp": {"$in": timestamps},
-            }
-        )
-        self.collection_aggregated_daily_metrics.insert_many(records)
-
-    def get_aggregated_metrics_by_user(
+    def get_aggregated_metrics(
         self,
         user_id: int,
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
-        metric_name: Optional[str] = None,
-    ) -> List[dict]:
+        start_date: Optional[datetime] = None,
+    ) -> List[AggregatedMetricRecord]:
+
         query = {"user_id": user_id}
 
         if start_date:
-            start_dt = datetime.combine(start_date, datetime.min.time()).isoformat()
-            query.setdefault("timestamp", {})["$gte"] = start_dt
+            query["timestamp"] = {"$gte": start_date}
 
-        if end_date:
-            end_dt = datetime.combine(
-                end_date + timedelta(days=1), datetime.min.time()
-            ).isoformat()
-            query.setdefault("timestamp", {})["$lt"] = end_dt
+        docs = self.collection_aggregated_metrics.find(query)
 
-        if metric_name:
-            query["metric_name"] = metric_name
+        return [
+            AggregatedMetricRecord(
+                user_id=doc["user_id"],
+                timestamp=doc["timestamp"],
+                metric_name=doc["metric_name"],
+                aggregated_value=doc["aggregated_value"],
+            )
+            for doc in docs
+        ]
 
-        docs = self.collection_aggregated_daily_metrics.find(query)
-
-        return docs
-
-    def save_contextual_metrics(self, records: List[dict]) -> None:
+    def save_contextual_metrics(self, records: List[ContextualMetricRecord]) -> None:
         if not records:
             return
+        dict_records = [r.to_dict() for r in records]
+        self.collection_contextual_metrics.insert_many(dict_records)
+        print(f"Inserted {len(dict_records)} contextual metrics records.")
 
-        user_id = records[0]["user_id"]
-        timestamps = list({r["timestamp"] for r in records})
+    def get_contextual_metrics(
+        self,
+        user_id: int,
+        start_date: Optional[datetime] = None,
+    ) -> List[ContextualMetricRecord]:
 
-        self.collection_contextual_daily_metrics.delete_many(
-            {
-                "user_id": user_id,
-                "timestamp": {"$in": timestamps},
-            }
-        )
+        query = {"user_id": user_id}
 
-        self.collection_contextual_daily_metrics.insert_many(records)
+        if start_date:
+            query["timestamp"] = {"$gte": start_date}
+
+        docs = self.collection_contextual_metrics.find(query)
+
+        return [
+            ContextualMetricRecord(
+                user_id=doc["user_id"],
+                timestamp=doc["timestamp"],
+                metric_name=doc["metric_name"],
+                contextual_value=doc["contextual_value"],
+            )
+            for doc in docs
+        ]

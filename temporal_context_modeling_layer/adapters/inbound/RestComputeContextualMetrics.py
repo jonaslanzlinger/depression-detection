@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query, HTTPException, APIRouter
+from fastapi import Query, HTTPException, APIRouter
 from core.use_cases.ComputeContextualMetricsUseCase import (
     ComputeContextualMetricsUseCase,
 )
@@ -14,7 +14,7 @@ def create_service_contextual_metrics(use_case: ComputeContextualMetricsUseCase)
         method: str = Query("ema", enum=["ema", "hmm"]),
     ):
         try:
-            result = use_case.compute(user_id, method=method)
+            result = use_case.compute(user_id, method)
             return result
         except Exception as e:
             logging.error(traceback.format_exc())
