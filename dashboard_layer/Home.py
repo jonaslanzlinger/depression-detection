@@ -7,7 +7,7 @@ st.title("IoT Sensing – Dashboard")
 
 client = MongoClient("mongodb://mongodb:27017")
 db = client["iotsensing"]
-collection = db["metrics"]
+collection = db["raw_metrics"]
 
 if collection.count_documents({}) == 0:
     st.warning("No data available.")

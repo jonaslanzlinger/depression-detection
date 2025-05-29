@@ -9,7 +9,7 @@ st.title("PHQ-9 Questionnaire")
 
 client = MongoClient("mongodb://mongodb:27017")
 db = client["iotsensing"]
-collection_metrics = db["metrics"]
+collection_metrics = db["raw_metrics"]
 collection_phq9 = db["phq9"]
 
 if collection_metrics.count_documents({}) == 0:
@@ -66,7 +66,7 @@ if selected_user:
 
     total_score = sum(phq9_scores.values())
     st.markdown("---")
-    st.markdown(f"### Total Score: **{total_score}**")
+    st.markdown(f"## Total Score: **{total_score}**")
 
     impact_labels = {
         "Not difficult at all": 0,
