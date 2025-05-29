@@ -3,10 +3,10 @@ import json
 from pathlib import Path
 from datetime import datetime
 
-df = pd.read_csv("analysis_layer/mapping/contextual_metrics_dump.csv")
+df = pd.read_csv("analysis_layer/core/mapping/contextual_metrics_dump.csv")
 df["timestamp"] = pd.to_datetime(df["timestamp"])
 
-with open("analysis_layer/mapping/config.json", "r") as f:
+with open("analysis_layer/core/mapping/config.json", "r") as f:
     dsm_mapping = json.load(f)
 
 df["metric_zscore"] = df.groupby("metric_name")["metric_contextual_value"].transform(
