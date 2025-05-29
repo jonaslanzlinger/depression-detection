@@ -79,6 +79,17 @@ else:
                 values="analyzed_value",
             )
 
-        st.line_chart(chart_data)
+        available_metrics = list(chart_data.columns)
+        selected_metrics = st.multiselect(
+            "",
+            options=available_metrics,
+            default=available_metrics,
+        )
 
-    st.dataframe(df.drop(columns=["_id"]))
+        filtered_chart_data = chart_data[selected_metrics]
+
+        st.line_chart(filtered_chart_data)
+
+        filtered_df = df[df["metric_name"].isin(selected_metrics)]
+
+        st.dataframe(filtered_df.drop(columns=["_id"]))
