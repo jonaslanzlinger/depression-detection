@@ -1,27 +1,102 @@
 {
-   "f0_avg": { "mean": 130.0, "std": 15.0 },
-   "f0_std": { "mean": 20.0, "std": 5.0 },
-   "f0_range": { "mean": 50.0, "std": 15.0 },
-   "formant_f1_frequencies_mean": { "mean": 500.0, "std": 100.0 },
-   "f2_transition_speed": { "mean": 200.0, "std": 50.0 },
-   "jitter": { "mean": 0.005, "std": 0.002 },
-   "shimmer": { "mean": 0.02, "std": 0.005 },
-   "hnr_mean": { "mean": 20.0, "std": 5.0 },
-   "snr": { "mean": 30.0, "std": 5.0 },
-   "spectral_flatness": { "mean": 0.3, "std": 0.1 },
-   "temporal_modulation": { "mean": 4.0, "std": 1.0 },
-   "spectral_modulation": { "mean": 3.5, "std": 1.0 },
-   "rate_of_speech": { "mean": 4.5, "std": 1.0 },
-   "articulation_rate": { "mean": 5.0, "std": 1.0 },
-   "pause_duration": { "mean": 1.2, "std": 0.5 },
-   "pause_count": { "mean": 6.0, "std": 2.0 },
-   "voice_onset_time": { "mean": 0.1, "std": 0.05 },
-   "glottal_pulse_rate": { "mean": 120.0, "std": 20.0 },
-   "rms_energy_range": { "mean": 20.0, "std": 5.0 },
-   "rms_energy_std": { "mean": 5.0, "std": 1.5 },
-   "psd-4": { "mean": 0.5, "std": 0.2 },
-   "psd-5": { "mean": 0.5, "std": 0.2 },
-   "psd-7": { "mean": 0.5, "std": 0.2 },
-   "t13": { "mean": 0.3, "std": 0.1 },
-   "voiced16_20": { "mean": 0.4, "std": 0.1 }
+   "articulation_rate": {
+      "mean": 3.8,
+      "std": 0.410391
+   },
+   "f0_avg": {
+      "mean": 266.859397,
+      "std": 16.025453
+   },
+   "f0_range": {
+      "mean": 408.239294,
+      "std": 200.712422
+   },
+   "f0_std": {
+      "mean": 102.884078,
+      "std": 41.250039
+   },
+   "f2_transition_speed": {
+      "mean": 18.793406,
+      "std": 1.810236
+   },
+   "formant_f1_frequencies_mean": {
+      "mean": 1718.512463,
+      "std": 24.954242
+   },
+   "glottal_pulse_rate": {
+      "mean": 204.245829,
+      "std": 10.091695
+   },
+   "hnr_mean": {
+      "mean": 0.044284,
+      "std": 3.935534
+   },
+   "jitter": {
+      "mean": 0.025119,
+      "std": 0.004506
+   },
+   "pause_count": {
+      "mean": 1.15,
+      "std": 0.366348
+   },
+   "pause_duration": {
+      "mean": 0.415,
+      "std": 0.156525
+   },
+   "psd-4": {
+      "mean": 0.000003,
+      "std": 0.000002
+   },
+   "psd-5": {
+      "mean": 0.000002,
+      "std": 0.000001
+   },
+   "psd-7": {
+      "mean": 0.0,
+      "std": 0.0
+   },
+   "rate_of_speech": {
+      "mean": 3.45,
+      "std": 0.510418
+   },
+   "rms_energy_range": {
+      "mean": 0.296037,
+      "std": 0.068724
+   },
+   "rms_energy_std": {
+      "mean": 0.05807,
+      "std": 0.007421
+   },
+   "shimmer": {
+      "mean": 0.083575,
+      "std": 0.007369
+   },
+   "snr": {
+      "mean": 3.685294,
+      "std": 0.377726
+   },
+   "spectral_flatness": {
+      "mean": 0.021027,
+      "std": 0.004747
+   },
+   "spectral_modulation": {
+      "mean": 1232.898892,
+      "std": 202.685414
+   },
+   "t13": {
+      "mean": 0.002044,
+      "std": 0.001958
+   },
+   "temporal_modulation": {
+      "mean": 64.532378,
+      "std": 6.049448
+   },
+   "voice_onset_time": {
+      "mean": 34.095862,
+      "std": 49.275623
+   },
+   "voiced16_20": {
+      "mean": 0.017054,
+      "std": 0.065211
+   }
 }

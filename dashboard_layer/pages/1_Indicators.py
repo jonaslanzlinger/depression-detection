@@ -41,19 +41,26 @@ if selected_user:
         st.info("No DSM-5 indicator scores available for this user.")
         st.stop()
 
-    pivot_df = user_df.pivot(index="timestamp", columns="indicator", values="score")
-    indicators = sorted(pivot_df.columns.tolist())
+    indicators_df = user_df[["timestamp", "indicator_scores"]].copy()
+    indicators_df = pd.concat(
+        [
+            indicators_df.drop(columns=["indicator_scores"]),
+            indicators_df["indicator_scores"].apply(pd.Series),
+        ],
+        axis=1,
+    )
+
+    indicators = sorted([col for col in indicators_df.columns if col != "timestamp"])
 
     selected_indicators = st.multiselect(
-        "",
+        "Select:",
         options=indicators,
         default=indicators,
     )
 
     if selected_indicators:
-        st.line_chart(pivot_df[selected_indicators])
-        filtered_table = user_df[user_df["indicator"].isin(selected_indicators)]
-        st.dataframe(filtered_table.drop(columns=["_id"]))
+        st.line_chart(indicators_df.set_index("timestamp")[selected_indicators])
+        st.dataframe(indicators_df[["timestamp"] + selected_indicators])
     else:
         st.info("Please select at least one indicator to display.")
 else:

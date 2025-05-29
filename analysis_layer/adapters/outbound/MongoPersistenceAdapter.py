@@ -18,6 +18,7 @@ class MongoPersistenceAdapter(PersistencePort):
         self.collection_contextual_metrics = self.db["contextual_metrics"]
         self.collection_analyzed_metrics = self.db["analyzed_metrics"]
         self.collection_indicator_scores = self.db["indicator_scores"]
+        self.collection_phq9 = self.db["phq9"]
 
     def get_latest_analyzed_metric_date(self, user_id: int) -> Optional[datetime]:
         cursor = (
@@ -42,6 +43,15 @@ class MongoPersistenceAdapter(PersistencePort):
         if doc:
             return doc["timestamp"]
         return None
+
+    def get_latest_indicator_score(
+        self, user_id: int
+    ) -> Optional[IndicatorScoreRecord]:
+        latest_score_doc = self.collection_indicator_scores.find_one(
+            {"user_id": user_id},
+            sort=[("timestamp", -1)],
+        )
+        return latest_score_doc
 
     def get_contextual_metrics(
         self,
@@ -103,3 +113,16 @@ class MongoPersistenceAdapter(PersistencePort):
         dict_records = [r.to_dict() for r in scores]
         self.collection_indicator_scores.insert_many(dict_records)
         print(f"Inserted {len(dict_records)} indicator score records.")
+
+    def save_phq9(
+        self, user_id, phq9_scores, total_score, functional_impact, timestamp
+    ) -> None:
+        doc = {
+            "user_id": user_id,
+            "timestamp": timestamp,
+            "phq9_scores": phq9_scores,
+            "total_score": total_score,
+            "functional_impact": functional_impact,
+        }
+        self.collection_phq9.insert_one(doc)
+        print(f"Inserted PHQ-9 answers for user {user_id} into DB.")

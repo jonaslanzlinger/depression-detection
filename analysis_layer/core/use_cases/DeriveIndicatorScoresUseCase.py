@@ -25,7 +25,7 @@ class DeriveIndicatorScoresUseCase:
         if not metrics:
             return {}
 
-        indicator_scores = derive_indicator_scores(user_id, metrics)
+        indicator_scores = derive_indicator_scores(user_id, metrics, self.repository)
 
         self.repository.save_indicator_scores(indicator_scores)
 

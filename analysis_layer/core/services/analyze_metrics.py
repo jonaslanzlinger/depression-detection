@@ -3,6 +3,7 @@ from typing import List
 from core.models.AnalyzedMetricRecord import AnalyzedMetricRecord
 from core.models.ContextualMetricRecord import ContextualMetricRecord
 from core.baseline.BaselineManager import BaselineManager
+import math
 
 
 def analyze_metrics(
@@ -23,11 +24,7 @@ def analyze_metrics(
         }
     )
 
-    print(f"df length:", df.shape)
-    print(df)
-
     user_baseline = baseline_manager.get_user_baseline(user_id)
-    print("user_baseline", user_baseline)
 
     z_scores = []
     for _, row in df.iterrows():
@@ -45,7 +42,12 @@ def analyze_metrics(
         else:
             z = None
 
-        z_scores.append(z)
+        if isinstance(z, (int, float)) and not (
+            math.isnan(z) or math.isinf(z) or abs(z) > 1e308 or abs(z) < 1e-323
+        ):
+            z_scores.append(z)
+        else:
+            z_scores.append(0)
 
     df["analyzed_value"] = z_scores
 

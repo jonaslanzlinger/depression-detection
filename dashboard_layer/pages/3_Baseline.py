@@ -31,11 +31,25 @@ selected_user = st.sidebar.selectbox("User", load_users(), key="user_id")
 if selected_user:
     baseline_docs = list(collection.find({"user_id": selected_user}))
     if baseline_docs:
-        baseline_df = pd.DataFrame(baseline_docs)
-        baseline_df["date"] = pd.to_datetime(baseline_df["date"])
+        records = []
+        for doc in baseline_docs:
+            timestamp = pd.to_datetime(doc["timestamp"])
+            user_id = doc["user_id"]
+            for metric_name, values in doc["metrics"].items():
+                records.append(
+                    {
+                        "user_id": user_id,
+                        "timestamp": timestamp,
+                        "metric_name": metric_name,
+                        "mean": values.get("mean"),
+                        "std": values.get("std"),
+                    }
+                )
+
+        baseline_df = pd.DataFrame(records)
 
         baseline_pivot = baseline_df.pivot(
-            index="date", columns="metric_name", values="mean"
+            index="timestamp", columns="metric_name", values="mean"
         )
 
         st.subheader("Baseline Mean Values Over Time")
@@ -44,7 +58,7 @@ if selected_user:
         selected_metrics = st.multiselect(
             "Select metrics to display:",
             options=all_metrics,
-            default=all_metrics[:5],
+            default=all_metrics,
         )
 
         if selected_metrics:

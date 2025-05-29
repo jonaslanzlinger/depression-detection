@@ -1,5 +1,3 @@
-import json
-from pathlib import Path
 from fastapi import FastAPI
 from adapters.inbound.RestFinetuneBaselineAdapter import (
     create_service_finetune_baseline,
@@ -13,28 +11,7 @@ from adapters.inbound.RestDeriveIndicatorScoresAdapter import (
     create_service_derive_indicator_scores,
 )
 
-with open("core/mapping/config.json", "r") as f:
-    mapping_config = json.load(f)
-
 baseline_manager = BaselineManager()
-mean, std = baseline_manager.get_user_baseline(user_id=1, metric_name="f0_avg")
-print(f"f0_avg baseline → mean: {mean}, std: {std}")
-
-baselines = baseline_manager.get_user_baseline(user_id=1)
-
-for metric, values in baselines.items():
-    print(f"{metric}: mean={values['mean']}, std={values['std']}")
-
-
-metric_value = 150.0
-mean, std = baseline_manager.get_user_baseline(user_id=1, metric_name="f0_avg")
-
-if std is not None and std > 0:
-    z_score = (metric_value - mean) / std
-    print("Z-score:", z_score)
-else:
-    print("⚠️ No baseline available.")
-
 repository = MongoPersistenceAdapter()
 
 analyze_metrics_use_case = AnalyzeMetricsUseCase(repository)

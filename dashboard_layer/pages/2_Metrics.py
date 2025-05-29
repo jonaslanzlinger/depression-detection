@@ -38,7 +38,7 @@ st.markdown(
     "**Contextual metrics:** Daily averages in temporal context per metric. or processed metrics that consider baseline and variability."
 )
 
-selected_view = st.radio("", list(collections.keys()), horizontal=True)
+selected_view = st.radio("Select:", list(collections.keys()), horizontal=True)
 
 collection_name = collections[selected_view]
 collection = db[collection_name]
@@ -81,7 +81,7 @@ else:
 
         available_metrics = list(chart_data.columns)
         selected_metrics = st.multiselect(
-            "",
+            "Select:",
             options=available_metrics,
             default=available_metrics,
         )

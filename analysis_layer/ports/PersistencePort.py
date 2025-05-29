@@ -16,6 +16,12 @@ class PersistencePort(ABC):
         pass
 
     @abstractmethod
+    def get_latest_indicator_score(
+        self, user_id: int
+    ) -> Optional[IndicatorScoreRecord]:
+        pass
+
+    @abstractmethod
     def get_contextual_metrics(
         self,
         user_id: int,
@@ -37,4 +43,10 @@ class PersistencePort(ABC):
 
     @abstractmethod
     def save_indicator_scores(self, scores: List[IndicatorScoreRecord]) -> None:
+        pass
+
+    @abstractmethod
+    def save_phq9(
+        self, user_id, phq9_scores, total_score, functional_impact, timestamp
+    ) -> None:
         pass
