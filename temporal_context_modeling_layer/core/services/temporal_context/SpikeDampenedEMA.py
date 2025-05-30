@@ -3,7 +3,7 @@ from typing import List
 
 
 class SpikeDampenedEMA(Contextualizer):
-    def __init__(self, alpha=0.1, spike_threshold=1.0, dampening_factor=0.3):
+    def __init__(self, alpha=0.13, spike_threshold=1.0, dampening_factor=0.3):
         self.alpha = alpha
         self.spike_threshold = spike_threshold
         self.dampening_factor = dampening_factor
