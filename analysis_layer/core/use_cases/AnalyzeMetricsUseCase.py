@@ -1,5 +1,5 @@
 from ports.PersistencePort import PersistencePort
-from datetime import timedelta
+from datetime import timedelta, datetime
 from typing import List
 from core.models.AnalyzedMetricRecord import AnalyzedMetricRecord
 from core.services.analyze_metrics import analyze_metrics
@@ -17,6 +17,7 @@ class AnalyzeMetricsUseCase:
         latest = self.repository.get_latest_analyzed_metric_date(user_id)
         start_date = None
         if latest:
+            latest = datetime.fromisoformat(latest)
             start_date = latest + timedelta(days=1)
 
         metrics = self.repository.get_contextual_metrics(

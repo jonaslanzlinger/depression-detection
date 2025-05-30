@@ -2,7 +2,7 @@ from ports.PersistencePort import PersistencePort
 from core.services.temporal_context.SpikeDampenedEMA import SpikeDampenedEMA
 from core.services.temporal_context.HMM import HMM
 import pandas as pd
-from datetime import timedelta
+from datetime import timedelta, datetime
 from typing import List
 from core.models.ContextualMetricRecord import ContextualMetricRecord
 
@@ -18,6 +18,7 @@ class ComputeContextualMetricsUseCase:
         latest = self.repository.get_latest_contextual_metric_date(user_id)
         start_date = None
         if latest:
+            latest = datetime.fromisoformat(latest)
             start_date = latest + timedelta(days=1)
 
         metrics = self.repository.get_aggregated_metrics(user_id)

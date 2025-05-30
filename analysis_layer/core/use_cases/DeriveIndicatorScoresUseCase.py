@@ -1,5 +1,5 @@
 from ports.PersistencePort import PersistencePort
-from datetime import timedelta
+from datetime import timedelta, datetime
 from typing import List
 from core.models.IndicatorScoreRecord import IndicatorScoreRecord
 from core.services.derive_indicator_scores import derive_indicator_scores
@@ -16,6 +16,7 @@ class DeriveIndicatorScoresUseCase:
         latest = self.repository.get_latest_indicator_score_date(user_id)
         start_date = None
         if latest:
+            latest = datetime.fromisoformat(latest)
             start_date = latest + timedelta(days=1)
 
         metrics = self.repository.get_analyzed_metrics(
