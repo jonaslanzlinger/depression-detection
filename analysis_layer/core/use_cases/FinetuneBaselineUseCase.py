@@ -1,8 +1,4 @@
 from ports.PersistencePort import PersistencePort
-from datetime import timedelta
-from typing import List
-from core.models.AnalyzedMetricRecord import AnalyzedMetricRecord
-from core.services.analyze_metrics import analyze_metrics
 from core.baseline.BaselineManager import BaselineManager
 
 
