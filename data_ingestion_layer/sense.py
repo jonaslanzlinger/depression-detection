@@ -2,6 +2,7 @@ from implementations.AudioSensor import AudioSensor
 from implementations.VoiceSensor import VoiceSensor
 from implementations.AudioFromFile import AudioFromFile
 from implementations.VoiceFromFile import VoiceFromFile
+from implementations.VoiceFromFileTest import VoiceFromFileTest
 
 if __name__ == "__main__":
 
@@ -13,7 +14,7 @@ if __name__ == "__main__":
     # voice_from_file = VoiceFromFile(
     #     filepath="ex_files/customdataset/may-27.wav", topic="voice/mic1"
     # )
-    voice_from_file = VoiceFromFile(
+    voice_from_file = VoiceFromFileTest(
         filepath="ex_files/TESS/long_happy_sample.wav",
         topic="voice/mic1",
     )
