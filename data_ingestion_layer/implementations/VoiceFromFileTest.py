@@ -148,7 +148,7 @@ class VoiceFromFileTest(AudioFromFile):
             self.stop()
 
     def stop(self):
-        csv_path = "processing_times.csv"
+        csv_path = "evaluate_processing_efficiency_data_ingestion_layer.csv"
         with open(csv_path, mode="w", newline="") as csvfile:
             writer = csv.DictWriter(
                 csvfile,
