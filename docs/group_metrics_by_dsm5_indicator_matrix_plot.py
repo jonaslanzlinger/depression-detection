@@ -3,90 +3,88 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 metric_categories = {
-    "Formant F1-F2": ["(1) Depressed Mood"],
-    "SNR": ["(1) Depressed Mood"],
+    "F1 / F2 formants": ["(1) Depressed mood"],
+    "SNR": ["(1) Depressed mood"],
     "F0 average": [
-        "(1) Depressed Mood",
-        "(3) Significant Weight Changes",
-        "(5) Psychomotor Retardation & Agitation",
+        "(1) Depressed mood",
+        "(3) Significant weight changes",
+        "(5) Psychomotor retardation / agitation",
     ],
     "F0 std": [
-        "(1) Depressed Mood",
-        "(2) Loss of Interest",
-        "(5) Psychomotor Retardation & Agitation",
-        "(8) Diminished Ability to Think or Concentrate",
+        "(1) Depressed mood",
+        "(2) Loss of interest",
+        "(5) Psychomotor retardation / agitation",
+        "(8) Diminished ability to think / concentrate",
     ],
     "F0 range": [
-        "(2) Loss of Interest",
-        "(8) Diminished Ability to Think or Concentrate",
+        "(2) Loss of interest",
+        "(8) Diminished ability to think / concentrate",
     ],
-    "Spectral flatness (SF)": [
-        "(1) Depressed Mood",
-        "(5) Psychomotor Retardation & Agitation",
+    "SF": [
+        "(1) Depressed mood",
+        "(5) Psychomotor retardation / agitation",
     ],
-    "Speech rate": ["(1) Depressed Mood", "(5) Psychomotor Retardation & Agitation"],
+    "Speech rate": ["(1) Depressed mood", "(5) Psychomotor retardation / agitation"],
     "Articulation rate": [
-        "(1) Depressed Mood",
-        "(5) Psychomotor Retardation & Agitation",
+        "(1) Depressed mood",
+        "(5) Psychomotor retardation / agitation",
     ],
     "Pause duration": [
-        "(1) Depressed Mood",
-        "(5) Psychomotor Retardation & Agitation",
-        "(8) Diminished Ability to Think or Concentrate",
+        "(1) Depressed mood",
+        "(5) Psychomotor retardation / agitation",
+        "(8) Diminished ability to think / concentrate",
     ],
     "Pause frequency": [
-        "(1) Depressed Mood",
-        "(5) Psychomotor Retardation & Agitation",
-        "(8) Diminished Ability to Think or Concentrate",
+        "(1) Depressed mood",
+        "(5) Psychomotor retardation / agitation",
+        "(8) Diminished ability to think / concentrate",
     ],
-    "Vowel space area (VSA)": [
-        "(1) Depressed Mood",
-        "(5) Psychomotor Retardation & Agitation",
+    "VSA": [
+        "(1) Depressed mood",
+        "(5) Psychomotor retardation / agitation",
     ],
-    "Formant F2 transition speed": [
-        "(1) Depressed Mood",
-        "(5) Psychomotor Retardation & Agitation",
+    "F2 formant transition speed": [
+        "(1) Depressed mood",
+        "(5) Psychomotor retardation / agitation",
     ],
     "Jitter": [
-        "(1) Depressed Mood",
-        "(2) Loss of Interest",
-        "(3) Significant Weight Changes",
-        "(5) Psychomotor Retardation & Agitation",
-        "(8) Diminished Ability to Think or Concentrate",
+        "(1) Depressed mood",
+        "(2) Loss of interest",
+        "(3) Significant weight changes",
+        "(5) Psychomotor retardation / agitation",
+        "(8) Diminished ability to think / concentrate",
     ],
     "Shimmer": [
-        "(1) Depressed Mood",
-        "(2) Loss of Interest",
-        "(3) Significant Weight Changes",
-        "(5) Psychomotor Retardation & Agitation",
-        "(8) Diminished Ability to Think or Concentrate",
+        "(1) Depressed mood",
+        "(2) Loss of interest",
+        "(3) Significant weight changes",
+        "(5) Psychomotor retardation / agitation",
+        "(8) Diminished ability to think / concentrate",
     ],
     "Volume intensity range": [
-        "(2) Loss of Interest",
-        "(8) Diminished Ability to Think or Concentrate",
+        "(2) Loss of interest",
+        "(8) Diminished ability to think / concentrate",
     ],
     "Volume intensity std": [
-        "(2) Loss of Interest",
-        "(8) Diminished Ability to Think or Concentrate",
+        "(2) Loss of interest",
+        "(8) Diminished ability to think / concentrate",
     ],
-    "HNR": ["(3) Significant Weight Changes", "(4) Insomnia & Hypersomnia"],
-    "Temporal modulations (2-8 Hz)": [
-        "(4) Insomnia & Hypersomnia",
-        "(6) Fatigue & Loss of Energy",
+    "HNR": ["(3) Significant weight changes"],
+    "Temporal modulations at 2-8 Hz": [
+        "(4) Insomnia / hypersomnia",
+        "(6) Fatigue / loss of energy",
     ],
-    "Spectral modulations (2 cyc/oct)": [
-        "(4) Insomnia & Hypersomnia",
-        "(6) Fatigue & Loss of Energy",
+    "Spectral modulations at 2 cyc/oct": [
+        "(4) Insomnia / hypersomnia",
+        "(6) Fatigue / loss of energy",
     ],
-    "Voice onset time (VOT)": ["(5) Psychomotor Retardation & Agitation"],
-    "Pulse (glottal pulses)": ["(8) Diminished Ability to Think or Concentrate"],
-    "PSD_4": ["(9) Recurrent Thoughts of Death or being Suicidal"],
-    "PSD_5": ["(9) Recurrent Thoughts of Death or being Suicidal"],
-    "PSD_7": ["(9) Recurrent Thoughts of Death or being Suicidal"],
-    "Voiced-to-silence transition (t_13)": [
-        "(9) Recurrent Thoughts of Death or being Suicidal"
-    ],
-    "Voiced16:20 interval PDF": ["(9) Recurrent Thoughts of Death or being Suicidal"],
+    "VOT": ["(5) Psychomotor retardation / agitation"],
+    "Pulse (glottal pulses)": ["(8) Diminished ability to think / concentrate"],
+    "PSD_4": ["(9) Suicidality"],
+    "PSD_5": ["(9) Suicidality"],
+    "PSD_7": ["(9) Suicidality"],
+    "Voiced-to-silence (t_13) transition": ["(9) Suicidality"],
+    "Voiced16:20 interval length PDF": ["(9) Suicidality"],
 }
 
 rows = []
@@ -96,14 +94,14 @@ for metric, indicators in metric_categories.items():
         rows.append((metric, ind))
         if ind not in indicator_order:
             indicator_order.append(ind)
-indicator_order.append("(7) Feelings of Worthlessness & Guilt")
+indicator_order.append("(7) Worthlessness / guilt")
 
 df = pd.DataFrame(rows, columns=["Metric", "Indicator"])
 df = pd.concat(
     [
         df,
         pd.DataFrame(
-            [("__dummy__", "(7) Feelings of Worthlessness & Guilt")],
+            [("__dummy__", "(7) Worthlessness / guilt")],
             columns=["Metric", "Indicator"],
         ),
     ]
@@ -118,13 +116,15 @@ heatmap_df = heatmap_df.drop(index="__dummy__")
 heatmap_df = heatmap_df.reindex(index=metric_categories.keys())
 heatmap_df = heatmap_df.reindex(columns=sorted(heatmap_df.columns))
 
+heatmap_df = heatmap_df.T
+
 plt.figure(figsize=(14, 12))
 sns.heatmap(
     heatmap_df, cmap="Greys", cbar=False, linewidths=0.5, linecolor="gray", square=True
 )
-plt.title("Voice Metrics Mapping to DSM-5 Indicators", fontsize=16)
-plt.xlabel("DSM-5 Indicators")
-plt.ylabel("Voice Metrics")
+# plt.title("Voice Metrics Mapping to DSM-5 Indicators", fontsize=16)
+plt.xlabel("")
+plt.ylabel("")
 plt.xticks(rotation=45, ha="right")
 plt.yticks(rotation=0)
 plt.tight_layout(rect=[0, 0.05, 1, 1])
