@@ -10,3 +10,7 @@ class UserRepositoryPort(ABC):
     @abstractmethod
     def save_user_embedding(self, user_id: int, embedding: np.ndarray):
         pass
+
+    @abstractmethod
+    def delete_user_embedding(self, user_id: int, embedding: np.ndarray):
+        pass

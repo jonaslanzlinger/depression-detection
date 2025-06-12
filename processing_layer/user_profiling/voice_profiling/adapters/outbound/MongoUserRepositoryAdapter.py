@@ -21,3 +21,12 @@ class MongoUserRepositoryAdapter(UserRepositoryPort):
         self.collection.insert_one(
             {"user_id": user_id, "embedding": embedding.tolist()}
         )
+
+    def delete_user_embedding(self, user_id: int, embedding: np.ndarray):
+        target_embedding = embedding.tolist()
+        result = self.collection.delete_one(
+            {"user_id": user_id, "embedding": target_embedding}
+        )
+
+        if result.deleted_count == 0:
+            print(f"Warning: No matching embedding found to delete for user {user_id}.")

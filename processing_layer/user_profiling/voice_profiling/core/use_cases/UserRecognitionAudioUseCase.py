@@ -54,5 +54,6 @@ class UserRecognitionAudioUseCase:
         profile = self.user_profiles[user_id]
         profile.append(embedding)
         if len(profile) > self.MAX_EMBEDDINGS:
-            profile.pop(0)
+            old_embedding = profile.pop(0)
+            self.repository.delete_user_embedding(user_id, old_embedding)
         self.repository.save_user_embedding(user_id, embedding)

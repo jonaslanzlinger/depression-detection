@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request, HTTPException
 import logging, traceback
 from ports.UserRecognitionAudioPort import UserRecognitionAudioPort
+import time
 
 
 def create_service(use_case: UserRecognitionAudioPort):
@@ -13,7 +14,11 @@ def create_service(use_case: UserRecognitionAudioPort):
             if not audio_bytes:
                 raise ValueError("No audio data received.")
 
-            return use_case.recognize_user(audio_bytes)
+            # start = time.perf_counter()
+            recognized_user = use_case.recognize_user(audio_bytes)
+            # end = time.perf_counter()
+            # print("[TEST] recognition_duration:", end - start)
+            return recognized_user
 
         except Exception as e:
             logging.error(traceback.format_exc())
