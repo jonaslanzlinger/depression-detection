@@ -24,7 +24,6 @@ class AudioFromFile(AbstractAudioDevice):
             mqtthostname=mqtthostname,
             mqttport=mqttport,
         )
-
         self.filepath = filepath
         self.audio_data = None
         self.frame_size = 512
@@ -36,15 +35,15 @@ class AudioFromFile(AbstractAudioDevice):
     def _load_file(self):
         audio_np, sr = sf.read(self.filepath)
 
+        if audio_np.ndim > 1:
+            audio_np = np.mean(audio_np, axis=1)
+
         # resample, if sample rate is not 16000
         if sr != 16000:
             audio_np = librosa.resample(
                 audio_np.astype(np.float32), orig_sr=sr, target_sr=16000
             )
             sr = 16000
-
-        if audio_np.ndim > 1:
-            audio_np = np.mean(audio_np, axis=1)
 
         max_val = np.max(np.abs(audio_np))
         if max_val > 0:
