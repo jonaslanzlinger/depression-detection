@@ -24,3 +24,5 @@ processing_layer/metrics_computation/voice_metrics/core/myprosody/myprosody/data
 
 # exclude ex_files
 ex_files
+
+**/performance_log.csv
