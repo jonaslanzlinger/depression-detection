@@ -1,102 +1,30 @@
 {
-   "articulation_rate": {
-      "mean": 3.8,
-      "std": 0.410391
-   },
-   "f0_avg": {
-      "mean": 266.859397,
-      "std": 16.025453
-   },
-   "f0_range": {
-      "mean": 408.239294,
-      "std": 200.712422
-   },
-   "f0_std": {
-      "mean": 102.884078,
-      "std": 41.250039
-   },
-   "f2_transition_speed": {
-      "mean": 18.793406,
-      "std": 1.810236
-   },
+   "articulation_rate": { "Mean": 4.232, "Standard Deviation": 0.38 },
+   "f0_avg": { "Mean": 148.091, "Standard Deviation": 39.692 },
+   "f0_range": { "Mean": 135.298, "Standard Deviation": 53.529 },
+   "f0_std": { "Mean": 25.808, "Standard Deviation": 10.876 },
+   "f2_transition_speed": { "Mean": 22.096, "Standard Deviation": 3.845 },
    "formant_f1_frequencies_mean": {
-      "mean": 1718.512463,
-      "std": 24.954242
+      "Mean": 1635.678,
+      "Standard Deviation": 55.287
    },
-   "glottal_pulse_rate": {
-      "mean": 204.245829,
-      "std": 10.091695
-   },
-   "hnr_mean": {
-      "mean": 0.044284,
-      "std": 3.935534
-   },
-   "jitter": {
-      "mean": 0.025119,
-      "std": 0.004506
-   },
-   "pause_count": {
-      "mean": 1.15,
-      "std": 0.366348
-   },
-   "pause_duration": {
-      "mean": 0.415,
-      "std": 0.156525
-   },
-   "psd-4": {
-      "mean": 0.000003,
-      "std": 0.000002
-   },
-   "psd-5": {
-      "mean": 0.000002,
-      "std": 0.000001
-   },
-   "psd-7": {
-      "mean": 0.0,
-      "std": 0.0
-   },
-   "rate_of_speech": {
-      "mean": 3.45,
-      "std": 0.510418
-   },
-   "rms_energy_range": {
-      "mean": 0.296037,
-      "std": 0.068724
-   },
-   "rms_energy_std": {
-      "mean": 0.05807,
-      "std": 0.007421
-   },
-   "shimmer": {
-      "mean": 0.083575,
-      "std": 0.007369
-   },
-   "snr": {
-      "mean": 3.685294,
-      "std": 0.377726
-   },
-   "spectral_flatness": {
-      "mean": 0.021027,
-      "std": 0.004747
-   },
-   "spectral_modulation": {
-      "mean": 1232.898892,
-      "std": 202.685414
-   },
-   "t13": {
-      "mean": 0.002044,
-      "std": 0.001958
-   },
-   "temporal_modulation": {
-      "mean": 64.532378,
-      "std": 6.049448
-   },
-   "voice_onset_time": {
-      "mean": 34.095862,
-      "std": 49.275623
-   },
-   "voiced16_20": {
-      "mean": 0.017054,
-      "std": 0.065211
-   }
+   "glottal_pulse_rate": { "Mean": 104.249, "Standard Deviation": 28.445 },
+   "hnr_mean": { "Mean": -17.393, "Standard Deviation": 11.62 },
+   "jitter": { "Mean": 0.027, "Standard Deviation": 0.006 },
+   "pause_count": { "Mean": 1.285, "Standard Deviation": 0.391 },
+   "pause_duration": { "Mean": 0.954, "Standard Deviation": 0.392 },
+   "psd-4": { "Mean": 3.76e-7, "Standard Deviation": 6.84e-7 },
+   "psd-5": { "Mean": 1.4e-7, "Standard Deviation": 2.03e-7 },
+   "psd-7": { "Mean": 7.5e-8, "Standard Deviation": 1.19e-7 },
+   "rate_of_speech": { "Mean": 3.53, "Standard Deviation": 0.431 },
+   "rms_energy_range": { "Mean": 0.089, "Standard Deviation": 0.064 },
+   "rms_energy_std": { "Mean": 0.016, "Standard Deviation": 0.012 },
+   "shimmer": { "Mean": 0.145, "Standard Deviation": 0.018 },
+   "snr": { "Mean": 3.627, "Standard Deviation": 0.562 },
+   "spectral_flatness": { "Mean": 0.016, "Standard Deviation": 0.005 },
+   "spectral_modulation": { "Mean": 848.361, "Standard Deviation": 214.39 },
+   "t13": { "Mean": 0.003, "Standard Deviation": 0.003 },
+   "temporal_modulation": { "Mean": 47.424, "Standard Deviation": 10.726 },
+   "voice_onset_time": { "Mean": -14.443, "Standard Deviation": 49.07 },
+   "voiced16_20": { "Mean": 0.018, "Standard Deviation": 0.017 }
 }
