@@ -7,7 +7,7 @@ import time
 import csv
 
 
-class VoiceFromFileTest(AudioFromFile):
+class VoiceFromFilePerformanceTest(AudioFromFile):
     def __init__(
         self,
         filepath=None,
@@ -72,8 +72,6 @@ class VoiceFromFileTest(AudioFromFile):
     def run(self):
         print("Started sensing. Ctrl+C to stop.")
 
-        TEST_SEGMENTS_TO_SEND = 10
-        TEST_SEGMENTS_SENT_COUNTER = 0
         collected_duration = 0
         collection_duration = 0
         filtration_duration = 0
@@ -84,13 +82,14 @@ class VoiceFromFileTest(AudioFromFile):
                 start = time.perf_counter()
                 raw = self.collect()
                 end = time.perf_counter()
-                collected_duration += len(raw) / self.sample_rate
-                collection_duration += end - start
 
                 if raw is None:
                     print("No data detected.")
-                    time.sleep(1.00)
-                    continue
+                    self.stop()
+                    break
+
+                collected_duration += len(raw) / self.sample_rate
+                collection_duration += end - start
 
                 start = time.perf_counter()
                 filtered = self.filter(raw)
@@ -102,25 +101,10 @@ class VoiceFromFileTest(AudioFromFile):
                     self.transport(filtered)
                     end = time.perf_counter()
                     transportation_duration += end - start
-                    # print(
-                    #     "collected_duration:",
-                    #     collected_duration,
-                    #     "collection_duration:",
-                    #     collection_duration,
-                    # )
-                    # print(
-                    #     "filtered_duration:",
-                    #     len(np.concatenate(filtered)) / self.sample_rate,
-                    #     "filtration_duration:",
-                    #     filtration_duration,
-                    # )
-                    # print(
-                    #     "transportation_duration:",
-                    #     transportation_duration,
-                    # )
 
                     self.performance_log.append(
                         {
+                            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
                             "collected_duration": collected_duration,
                             "collection_duration": collection_duration,
                             "filtered_duration": (
@@ -133,26 +117,24 @@ class VoiceFromFileTest(AudioFromFile):
                         }
                     )
 
+                    # for simulating real-time processing
+                    time.sleep(collected_duration)
+
                     collected_duration = 0
                     collection_duration = 0
                     filtration_duration = 0
                     transportation_duration = 0
 
-                    TEST_SEGMENTS_SENT_COUNTER += 1
-
-                    if TEST_SEGMENTS_SENT_COUNTER >= TEST_SEGMENTS_TO_SEND:
-                        self.stop()
-                        break
-
         except KeyboardInterrupt:
             self.stop()
 
     def stop(self):
-        csv_path = "evaluate_processing_efficiency_data_ingestion_layer.csv"
+        csv_path = "performance_log.csv"
         with open(csv_path, mode="w", newline="") as csvfile:
             writer = csv.DictWriter(
                 csvfile,
                 fieldnames=[
+                    "timestamp",
                     "collected_duration",
                     "collection_duration",
                     "filtered_duration",
