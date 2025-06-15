@@ -72,10 +72,10 @@ class VoiceFromFilePerformanceTest(AudioFromFile):
     def run(self):
         print("Started sensing. Ctrl+C to stop.")
 
-        collected_duration = 0
-        collection_duration = 0
-        filtration_duration = 0
-        transportation_duration = 0
+        original_audio_duration = 0
+        step_collect_duration = 0
+        step_filter_duration = 0
+        step_transport_duration = 0
 
         try:
             while True:
@@ -88,42 +88,42 @@ class VoiceFromFilePerformanceTest(AudioFromFile):
                     self.stop()
                     break
 
-                collected_duration += len(raw) / self.sample_rate
-                collection_duration += end - start
+                original_audio_duration += len(raw) / self.sample_rate
+                step_collect_duration += end - start
 
                 start = time.perf_counter()
                 filtered = self.filter(raw)
                 end = time.perf_counter()
-                filtration_duration += end - start
+                step_filter_duration += end - start
 
                 if filtered is not None:
                     start = time.perf_counter()
                     self.transport(filtered)
                     end = time.perf_counter()
-                    transportation_duration += end - start
+                    step_transport_duration += end - start
 
                     self.performance_log.append(
                         {
                             "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
-                            "collected_duration": collected_duration,
-                            "collection_duration": collection_duration,
-                            "filtered_duration": (
+                            "original_audio_duration": original_audio_duration,
+                            "step_collect_duration": step_collect_duration,
+                            "filtered_audio_duration": (
                                 len(np.concatenate(filtered)) / self.sample_rate
                                 if filtered
                                 else 0.0
                             ),
-                            "filtration_duration": filtration_duration,
-                            "transportation_duration": transportation_duration,
+                            "step_filter_duration": step_filter_duration,
+                            "step_transport_duration": step_transport_duration,
                         }
                     )
 
                     # for simulating real-time processing
-                    time.sleep(collected_duration)
+                    time.sleep(original_audio_duration)
 
-                    collected_duration = 0
-                    collection_duration = 0
-                    filtration_duration = 0
-                    transportation_duration = 0
+                    original_audio_duration = 0
+                    step_collect_duration = 0
+                    step_filter_duration = 0
+                    step_transport_duration = 0
 
         except KeyboardInterrupt:
             self.stop()
@@ -135,11 +135,11 @@ class VoiceFromFilePerformanceTest(AudioFromFile):
                 csvfile,
                 fieldnames=[
                     "timestamp",
-                    "collected_duration",
-                    "collection_duration",
-                    "filtered_duration",
-                    "filtration_duration",
-                    "transportation_duration",
+                    "original_audio_duration",
+                    "step_collect_duration",
+                    "filtered_audio_duration",
+                    "step_filter_duration",
+                    "step_transport_duration",
                 ],
             )
             writer.writeheader()
