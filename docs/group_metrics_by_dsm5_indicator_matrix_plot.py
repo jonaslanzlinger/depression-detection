@@ -119,13 +119,18 @@ heatmap_df = heatmap_df.reindex(columns=sorted(heatmap_df.columns))
 heatmap_df = heatmap_df.T
 
 plt.figure(figsize=(14, 12))
+
+sns.set_context("talk", font_scale=1.7)
+
 sns.heatmap(
     heatmap_df, cmap="Greys", cbar=False, linewidths=0.5, linecolor="gray", square=True
 )
-# plt.title("Voice Metrics Mapping to DSM-5 Indicators", fontsize=16)
+
 plt.xlabel("")
 plt.ylabel("")
-plt.xticks(rotation=45, ha="right")
-plt.yticks(rotation=0)
+
+plt.xticks(rotation=45, ha="right", fontsize=16)
+plt.yticks(rotation=0, fontsize=16)
+
 plt.tight_layout(rect=[0, 0.05, 1, 1])
 plt.show()
