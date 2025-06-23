@@ -1,6 +1,7 @@
 import pandas as pd
-from upsetplot import UpSet, from_memberships
 import matplotlib.pyplot as plt
+from matplotlib import rcParams
+from upsetplot import UpSet, from_memberships
 
 metric_categories = {
     "F1 / F2 formants": ["(1) Depressed mood"],
@@ -100,6 +101,16 @@ all_indicators = sorted(
     {ind for indicators in metric_categories.values() for ind in indicators}
 )
 
+rcParams.update(
+    {
+        "font.size": 14,
+        "axes.titlesize": 16,
+        "axes.labelsize": 14,
+        "xtick.labelsize": 13,
+        "ytick.labelsize": 13,
+    }
+)
+
 plt.figure(figsize=(12, 6))
 UpSet(
     data,
@@ -111,5 +122,10 @@ UpSet(
 ).plot()
 
 # plt.suptitle("Voice Metrics Intersections by DSM-5 Indicators", fontsize=16)
+
+for ax in plt.gcf().get_axes():
+    ax.grid(False)
+    ax.set_axisbelow(False)
+
 plt.tight_layout()
 plt.show()
