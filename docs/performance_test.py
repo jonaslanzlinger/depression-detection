@@ -24,67 +24,73 @@ if len(data_ingestion_df) == len(metrics_df) == len(profiling_df):
         axis=1,
     )
 
-    # cumulate total processing duration of tightly coupled services
     combined_df["tightly_coupled_processing_duration"] = (
         combined_df["computation_duration"] + combined_df["profiling_duration"]
     )
 
+    combined_df["time_only"] = combined_df["timestamp"].dt.strftime("%H:%M:%S")
+    tick_step = 5
+    xtick_indices = combined_df.index[::tick_step]
+    xtick_labels = combined_df["time_only"].iloc[::tick_step]
+
     plt.figure(figsize=(14, 8))
+
     plt.plot(
-        combined_df["timestamp"],
+        combined_df.index,
         combined_df["original_audio_duration"],
-        label="original_audio_duration",
+        label="(1) original_audio_duration",
         marker="o",
     )
     plt.plot(
-        combined_df["timestamp"],
+        combined_df.index,
         combined_df["step_collect_duration"],
-        label="step_collect_duration",
+        label="(2) step_collect_duration",
         marker="v",
     )
     plt.plot(
-        combined_df["timestamp"],
+        combined_df.index,
         combined_df["filtered_audio_duration"],
-        label="filtered_audio_duration",
+        label="(3) filtered_audio_duration",
         marker="d",
     )
     plt.plot(
-        combined_df["timestamp"],
+        combined_df.index,
         combined_df["step_filter_duration"],
-        label="step_filter_duration",
+        label="(4) step_filter_duration",
         marker="x",
     )
     plt.plot(
-        combined_df["timestamp"],
+        combined_df.index,
         combined_df["step_transport_duration"],
-        label="step_transport_duration",
+        label="(5) step_transport_duration",
         marker="1",
     )
     plt.plot(
-        combined_df["timestamp"],
+        combined_df.index,
         combined_df["computation_duration"],
-        label="computation_duration",
+        label="(6) computation_duration",
         marker="^",
     )
     plt.plot(
-        combined_df["timestamp"],
+        combined_df.index,
         combined_df["profiling_duration"],
-        label="profiling_duration",
+        label="(7) profiling_duration",
         marker="s",
     )
     plt.plot(
-        combined_df["timestamp"],
+        combined_df.index,
         combined_df["tightly_coupled_processing_duration"],
-        label="tightly_coupled_processing_duration",
+        label="(8) tightly_coupled_processing_duration",
         linestyle="--",
         linewidth=2,
     )
 
-    plt.xlabel("Timestamp")
-    plt.ylabel("Duration (seconds)")
-    plt.legend()
+    plt.rcParams.update({"font.size": 14})
+    plt.xlabel("Timestamp", fontsize=16)
+    plt.ylabel("Duration (seconds)", fontsize=16)
+    plt.legend(fontsize=15)
     plt.grid(True)
-    plt.xticks(rotation=45)
+    plt.xticks(ticks=xtick_indices, labels=xtick_labels, rotation=45)
     plt.tight_layout()
     plt.show()
 
