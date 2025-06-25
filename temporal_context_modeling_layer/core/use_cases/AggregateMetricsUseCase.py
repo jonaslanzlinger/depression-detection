@@ -3,6 +3,7 @@ from datetime import timedelta, datetime
 from typing import List
 from core.services.aggregate_metrics import aggregate_metrics
 from core.models.AggregatedMetricRecord import AggregatedMetricRecord
+from datetime import timezone
 
 
 class AggregateMetricsUseCase:
@@ -14,7 +15,11 @@ class AggregateMetricsUseCase:
         latest = self.repository.get_latest_aggregated_metric_date(user_id)
         start_date = None
         if latest:
-            latest = datetime.fromisoformat(latest)
+            if isinstance(latest, str):
+                latest = datetime.fromisoformat(latest)
+            if latest.tzinfo is None:
+                latest = latest.replace(tzinfo=timezone.utc)
+
             start_date = latest + timedelta(days=1)
 
         metrics = self.repository.get_raw_metrics(

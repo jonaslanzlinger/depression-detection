@@ -18,7 +18,8 @@ class ComputeContextualMetricsUseCase:
         latest = self.repository.get_latest_contextual_metric_date(user_id)
         start_date = None
         if latest:
-            latest = datetime.fromisoformat(latest)
+            if isinstance(latest, str):
+                latest = datetime.fromisoformat(latest)
             start_date = latest + timedelta(days=1)
 
         metrics = self.repository.get_aggregated_metrics(user_id)

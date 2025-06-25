@@ -16,7 +16,8 @@ class DeriveIndicatorScoresUseCase:
         latest = self.repository.get_latest_indicator_score_date(user_id)
         start_date = None
         if latest:
-            latest = datetime.fromisoformat(latest)
+            if isinstance(latest, str):
+                latest = datetime.fromisoformat(latest)
             start_date = latest + timedelta(days=1)
 
         metrics = self.repository.get_analyzed_metrics(

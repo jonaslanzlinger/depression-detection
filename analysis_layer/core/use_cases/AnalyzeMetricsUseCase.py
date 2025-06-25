@@ -17,7 +17,8 @@ class AnalyzeMetricsUseCase:
         latest = self.repository.get_latest_analyzed_metric_date(user_id)
         start_date = None
         if latest:
-            latest = datetime.fromisoformat(latest)
+            if isinstance(latest, str):
+                latest = datetime.fromisoformat(latest)
             start_date = latest + timedelta(days=1)
 
         metrics = self.repository.get_contextual_metrics(

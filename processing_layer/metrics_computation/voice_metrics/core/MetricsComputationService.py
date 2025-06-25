@@ -122,11 +122,8 @@ class MetricsComputationService:
 
         flat_metrics.update(myprosody_metrics)
 
-        # timestamp = datetime.now(timezone.utc).isoformat()
         # utiliy funcation for simulating data ingestion timestamps
-        timestamp = (
-            datetime.now(timezone.utc) + timedelta(days=self.day_counter)
-        ).isoformat()
+        timestamp = datetime.now(timezone.utc) + timedelta(days=self.day_counter)
         self.day_counter += 1
 
         # Convert all metrics to a list of records
