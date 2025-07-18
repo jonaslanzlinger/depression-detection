@@ -17,6 +17,8 @@
 
 ![Conceptual project idea.](docs/assets/conceptual_idea.png)
 
+https://github.com/user-attachments/assets/794a8cf0-cbf7-4535-a1cc-791c5f7b1c11
+
 ## Motivation
 
 > This master’s thesis introduces a novel approach for automated mental health monitoring. Particularly designed around an acoustic-based approach for depression detection, designed specifically as a software application for IoT-enabled private households. Using passive sensing techniques, the system focuses on the detection of potential depressive behavior to allow timely intervention. By constructing a direct mapping between behavioral patterns and observable clinical symptoms, users can gain insight into their mental health state, helping to overcome the limitations of traditional methods.
