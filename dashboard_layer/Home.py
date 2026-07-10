@@ -1,46 +1,59 @@
+"""IHearYou dashboard entry point.
+
+Defines the grouped sidebar navigation (st.navigation, Streamlit 1.55) and runs the
+selected page. Page content lives in pages/*.py; the landing is pages/00_Home.py.
+
+NOTE: st.set_page_config is called ONCE here. Individual pages must NOT call it (under
+st.navigation the entry + the selected page run in the same script pass, so a second
+call raises StreamlitSetPageConfigMustBeFirstCommandError).
+"""
+
 import streamlit as st
-from pymongo import MongoClient
-import pandas as pd
-from utils.refresh_procedure import refresh_procedure
 
-st.title("IoT Sensing – Dashboard")
+from utils.setup_db import setup_indexes
 
-client = MongoClient("mongodb://mongodb:27017")
-db = client["iotsensing"]
-collection = db["raw_metrics"]
-
-if collection.count_documents({}) == 0:
-    st.warning("No data available.")
-    st.stop()
+st.set_page_config(page_title="IHearYou", page_icon="🧠", layout="wide")
 
 
-@st.cache_data
-def load_users():
-    df = pd.DataFrame(collection.find())
-    return df["user_id"].unique()
+# Ensure indexes ONCE per process (cache_resource persists across reruns/sessions).
+@st.cache_resource(show_spinner=False)
+def _ensure_indexes_once():
+    try:
+        setup_indexes()
+    except Exception as e:
+        print(f"Index setup failed (expected if DB is not ready): {e}")
+    return True
 
 
-st.sidebar.title("Actions")
+_ensure_indexes_once()
 
-if st.sidebar.button("🔄 Refresh Analysis"):
-    refresh_procedure()
+# Grouped navigation. Dict keys are sidebar section headers; order = display order.
+# st.Page(title=...) sets BOTH the sidebar label and the browser-tab title, so naming
+# is consistent centrally without editing each page's in-page st.title().
+# Operator-primary: to put Fleet above My Wellbeing, move the "Fleet" block up.
+pages = {
+    " ": [  # ungrouped, top of the sidebar (no visible header)
+        st.Page("views/00_Home.py", title="Home", icon="🏠", default=True),
+    ],
+    "My Wellbeing": [
+        st.Page("views/1_Overview.py",       title="Overview",       icon="💚"),
+        st.Page("views/2_Indicators.py",     title="Indicators",     icon="📊"),
+        st.Page("views/3_Trends.py",         title="Trends",         icon="📈"),
+        st.Page("views/4_Self_Report.py",    title="Self-Report",    icon="📝"),
+        st.Page("views/13_Daily_Checkin.py", title="Daily Check-in", icon="📆"),
+    ],
+    "Fleet": [
+        st.Page("views/12_Fleet_Health.py", title="Fleet Health",   icon="🩺"),
+        st.Page("views/5_Boards.py",        title="Boards & Rooms", icon="📡"),
+        st.Page("views/10_Edge_Nodes.py",   title="Edge Nodes",     icon="🔌"),
+    ],
+    "Admin": [
+        st.Page("views/8_User_Management.py",      title="Users & Enrollment",  icon="👥"),
+        st.Page("views/7_Data_Tools.py",           title="Data Tools",          icon="🔧"),
+        st.Page("views/9_Scene_Forensics.py",      title="Scene Analysis",      icon="🔬"),
+        st.Page("views/6_Settings.py",             title="Settings",            icon="⚙️"),
+        st.Page("views/11_Research_Validation.py", title="Research Validation", icon="🧪"),
+    ],
+}
 
-st.sidebar.subheader("Select User")
-selected_user = st.sidebar.selectbox("User", load_users(), key="user_id")
-
-# THIS PART IS ABOUT DELETING USER DATA IN THE DATABASE
-# col1, col2 = st.columns(2)
-
-# with col1:
-#     if st.button("Reset User"):
-#         result = collection.delete_many({"user_id": st.session_state["user_id"]})
-#         st.success(
-#             f"Deleted {result.deleted_count} records for user {st.session_state['user_id']}"
-#         )
-#         st.rerun()
-
-# with col2:
-#     if st.button("Reset All"):
-#         result = collection.delete_many({})
-#         st.success(f"Deleted all records ({result.deleted_count} total)")
-#         st.rerun()
+st.navigation(pages).run()

@@ -11,7 +11,7 @@ class AnalyzeMetricsUseCase:
         self.repository = repository
 
     def analyze_metrics(
-        self, user_id: int, baseline_manager: BaselineManager
+        self, user_id: str, baseline_manager: BaselineManager
     ) -> List[AnalyzedMetricRecord]:
 
         latest = self.repository.get_latest_analyzed_metric_date(user_id)
@@ -27,6 +27,12 @@ class AnalyzeMetricsUseCase:
 
         if not metrics:
             return {}
+
+        # Once the user is past the learning period, establish a data-derived baseline
+        # (no-op if one already exists or there isn't enough history yet) so the z-scoring
+        # below measures against the user's own baseline rather than the population one.
+        for mode in {getattr(m, "system_mode", None) or "live" for m in metrics}:
+            baseline_manager.maybe_compute_baseline(user_id, system_mode=mode)
 
         analyzed_metrics = analyze_metrics(user_id, metrics, baseline_manager)
 

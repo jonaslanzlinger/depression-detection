@@ -3,7 +3,11 @@ import requests
 
 
 def refresh_procedure():
-    user_id = st.session_state["user_id"]
+    user_id = st.session_state.get("user_id")
+    
+    if not user_id:
+        st.error("No user selected. Please select a user from the sidebar.")
+        return
 
     AGGREGATE_METRICS_URL = (
         "http://temporal_context_modeling_layer:8082/aggregate_metrics"

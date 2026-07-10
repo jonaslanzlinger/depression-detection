@@ -4,302 +4,309 @@
          "formant_f1_frequencies_mean": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "positive"
+            "direction": "positive",
+            "clipping_threshold": 3.0
          },
          "snr": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "negative"
+            "direction": "negative",
+            "clipping_threshold": 3.0
          },
          "f0_avg": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "negative"
+            "direction": "negative",
+            "clipping_threshold": 3.0
          },
          "f0_std": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "negative"
+            "direction": "negative",
+            "clipping_threshold": 3.0
          },
          "spectral_flatness": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "positive"
+            "direction": "positive",
+            "clipping_threshold": 3.0
          },
          "rate_of_speech": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "negative"
+            "direction": "negative",
+            "clipping_threshold": 3.0
          },
          "articulation_rate": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "negative"
+            "direction": "negative",
+            "clipping_threshold": 3.0
          },
          "pause_duration": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "positive"
+            "direction": "positive",
+            "clipping_threshold": 3.0
          },
          "pause_count": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "positive"
+            "direction": "positive",
+            "clipping_threshold": 3.0
          },
          "f2_transition_speed": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "negative"
+            "direction": "negative",
+            "clipping_threshold": 3.0
          },
          "jitter": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "positive"
+            "direction": "positive",
+            "clipping_threshold": 3.0
          },
          "shimmer": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "positive"
+            "direction": "positive",
+            "clipping_threshold": 3.0
          }
-      }
+      },
+      "smoothing_factor": 0.8667,
+      "severity_threshold": 0.5
    },
-
    "2_loss_of_interest": {
       "metrics": {
          "f0_std": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "negative"
+            "direction": "negative",
+            "clipping_threshold": 3.0
          },
          "f0_range": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "negative"
+            "direction": "negative",
+            "clipping_threshold": 3.0
          },
          "jitter": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "positive"
+            "direction": "positive",
+            "clipping_threshold": 3.0
          },
          "shimmer": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "positive"
+            "direction": "positive",
+            "clipping_threshold": 3.0
          },
          "rms_energy_range": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "negative"
+            "direction": "negative",
+            "clipping_threshold": 3.0
          },
          "rms_energy_std": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "negative"
+            "direction": "negative",
+            "clipping_threshold": 3.0
          }
-      }
+      },
+      "smoothing_factor": 0.8667,
+      "severity_threshold": 0.5
    },
-
    "3_significant_weight_changes": {
-      "metrics": {
-         "f0_avg": {
-            "weight": 1.0,
-            "correlation": "linear",
-            "direction": "negative"
-         },
-         "jitter": {
-            "weight": 1.0,
-            "correlation": "linear",
-            "direction": "positive"
-         },
-         "shimmer": {
-            "weight": 1.0,
-            "correlation": "linear",
-            "direction": "positive"
-         },
-         "hnr_mean": {
-            "weight": 1.0,
-            "correlation": "linear",
-            "direction": "negative"
-         }
-      }
+      "metrics": {},
+      "smoothing_factor": 0.8667,
+      "severity_threshold": 0.5
    },
-
    "4_insomnia_hypersomnia": {
       "metrics": {
          "hnr_mean": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "negative"
+            "direction": "negative",
+            "clipping_threshold": 3.0
          },
          "temporal_modulation": {
             "weight": 1.0,
             "correlation": "nonlinear",
-            "direction": "anomaly"
+            "direction": "anomaly",
+            "clipping_threshold": 3.0
          },
          "spectral_modulation": {
             "weight": 1.0,
             "correlation": "nonlinear",
-            "direction": "anomaly"
+            "direction": "anomaly",
+            "clipping_threshold": 3.0
          }
-      }
+      },
+      "smoothing_factor": 0.8667,
+      "severity_threshold": 0.5
    },
-
    "5_psychomotor_retardation_agitation": {
       "metrics": {
          "f0_avg": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "negative"
+            "direction": "negative",
+            "clipping_threshold": 3.0
          },
          "f0_std": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "negative"
+            "direction": "negative",
+            "clipping_threshold": 3.0
          },
          "spectral_flatness": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "positive"
+            "direction": "positive",
+            "clipping_threshold": 3.0
          },
          "rate_of_speech": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "negative"
+            "direction": "negative",
+            "clipping_threshold": 3.0
          },
          "articulation_rate": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "negative"
+            "direction": "negative",
+            "clipping_threshold": 3.0
          },
          "pause_duration": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "positive"
+            "direction": "positive",
+            "clipping_threshold": 3.0
          },
          "pause_count": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "positive"
+            "direction": "positive",
+            "clipping_threshold": 3.0
          },
          "f2_transition_speed": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "negative"
+            "direction": "negative",
+            "clipping_threshold": 3.0
          },
          "jitter": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "positive"
+            "direction": "positive",
+            "clipping_threshold": 3.0
          },
          "shimmer": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "positive"
+            "direction": "positive",
+            "clipping_threshold": 3.0
          },
          "voice_onset_time": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "positive"
+            "direction": "positive",
+            "clipping_threshold": 3.0
          }
-      }
+      },
+      "smoothing_factor": 0.8667,
+      "severity_threshold": 0.5
    },
-
    "6_fatigue_loss_of_energy": {
       "metrics": {
          "temporal_modulation": {
             "weight": 1.0,
             "correlation": "nonlinear",
-            "direction": "anomaly"
+            "direction": "anomaly",
+            "clipping_threshold": 3.0
          },
          "spectral_modulation": {
             "weight": 1.0,
             "correlation": "nonlinear",
-            "direction": "anomaly"
+            "direction": "anomaly",
+            "clipping_threshold": 3.0
          }
-      }
+      },
+      "smoothing_factor": 0.8667,
+      "severity_threshold": 0.5
    },
-
    "7_feelings_of_worthlessness_guilt": {
-      "metrics": {}
+      "metrics": {},
+      "smoothing_factor": 0.8667,
+      "severity_threshold": 0.5
    },
-
    "8_diminished_ability_to_think_or_concentrate": {
       "metrics": {
          "f0_std": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "negative"
+            "direction": "negative",
+            "clipping_threshold": 3.0
          },
          "f0_range": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "negative"
+            "direction": "negative",
+            "clipping_threshold": 3.0
          },
          "pause_duration": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "positive"
+            "direction": "positive",
+            "clipping_threshold": 3.0
          },
          "pause_count": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "positive"
+            "direction": "positive",
+            "clipping_threshold": 3.0
          },
          "jitter": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "positive"
+            "direction": "positive",
+            "clipping_threshold": 3.0
          },
          "shimmer": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "positive"
+            "direction": "positive",
+            "clipping_threshold": 3.0
          },
          "rms_energy_range": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "negative"
+            "direction": "negative",
+            "clipping_threshold": 3.0
          },
          "rms_energy_std": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "negative"
+            "direction": "negative",
+            "clipping_threshold": 3.0
          },
          "glottal_pulse_rate": {
             "weight": 1.0,
             "correlation": "linear",
-            "direction": "negative"
+            "direction": "negative",
+            "clipping_threshold": 3.0
          }
-      }
+      },
+      "smoothing_factor": 0.8667,
+      "severity_threshold": 0.5
    },
-
    "9_recurrent_thoughts_of_death_or_being_suicidal": {
-      "metrics": {
-         "psd-4": {
-            "weight": 1.0,
-            "correlation": "linear",
-            "direction": "both"
-         },
-         "psd-5": {
-            "weight": 1.0,
-            "correlation": "linear",
-            "direction": "both"
-         },
-         "psd-7": {
-            "weight": 1.0,
-            "correlation": "linear",
-            "direction": "both"
-         },
-         "t13": {
-            "weight": 1.0,
-            "correlation": "linear",
-            "direction": "positive"
-         },
-         "voiced16_20": {
-            "weight": 1.0,
-            "correlation": "linear",
-            "direction": "negative"
-         }
-      }
+      "metrics": {},
+      "smoothing_factor": 0.8667,
+      "severity_threshold": 0.5,
+      "_comment": "Not acoustically measurable - requires content analysis or self-report"
    }
 }

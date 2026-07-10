@@ -1,0 +1,25 @@
+# IHearYou Firmware - ReSpeaker XVF3800 Specific Configuration
+# Board: ReSpeaker XVF3800 with 4-mic array
+
+# =============================================================================
+# Board Selection
+# =============================================================================
+# CONFIG_BOARD_RESPEAKER_LITE is not set
+CONFIG_BOARD_RESPEAKER_XVF3800=y
+
+# =============================================================================
+# I2S Configuration for XVF3800
+# =============================================================================
+# XVF3800 is I2S master, ESP32 is slave
+# Bidirectional I2S for reference audio (AEC)
+
+# =============================================================================
+# I2C Configuration for XVF3800 Control
+# =============================================================================
+# XVF3800 I2C address: 0x2C
+# Control interface for DSP parameters
+
+# =============================================================================
+# Additional Stack for DSP Control Task
+# =============================================================================
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192

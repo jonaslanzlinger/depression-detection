@@ -2,12 +2,15 @@ from abc import ABC, abstractmethod
 import paho.mqtt.client as mqtt
 from paho.mqtt.client import CallbackAPIVersion
 
+from framework.mqtt_auth import apply_mqtt_auth
+
 
 class AbstractEdgeDevice(ABC):
     def __init__(self, topic="miscellaneous", mqtthostname="localhost", mqttport=1883):
         self.topic = topic
 
         self.client = mqtt.Client(callback_api_version=CallbackAPIVersion.VERSION2)
+        apply_mqtt_auth(self.client)
         self.client.connect(mqtthostname, mqttport, 60)
         self.client.loop_start()
 

@@ -10,7 +10,7 @@ def create_service_contextual_metrics(use_case: ComputeContextualMetricsUseCase)
 
     @router.get("/compute_contextual_metrics")
     def compute_contextual_metrics(
-        user_id: int = Query(...),
+        user_id: str = Query(...),
         method: str = Query("ema", enum=["ema", "hmm"]),
     ):
         try:

@@ -1,0 +1,35 @@
+# ---- builder: toolchain to compile pyaudio (needs portaudio headers) into a venv ----
+FROM python:3.11-slim AS builder
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    portaudio19-dev \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+RUN python -m venv --copies /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+# Pinned versions (from the known-good image) for reproducible fresh/ARM builds.
+# torch/torchaudio (Silero VAD) from the CPU index: VAD runs on CPU, avoiding the ~3GB
+# CUDA build.
+RUN pip install --no-cache-dir --upgrade pip \
+ && pip install --no-cache-dir torch==2.10.0 torchaudio==2.10.0 \
+    --index-url https://download.pytorch.org/whl/cpu
+RUN pip install --no-cache-dir \
+    pymongo==4.16.0 \
+    paho-mqtt==2.1.0 \
+    numpy==2.4.3 \
+    soundfile==0.13.1 \
+    pyaudio==0.2.14 \
+    scipy==1.17.1 \
+    librosa==0.11.0
+
+# ---- runtime: slim base + runtime libs only (portaudio runtime, no headers/compiler) ----
+FROM python:3.11-slim AS runtime
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libsndfile1 \
+    libportaudio2 \
+    && rm -rf /var/lib/apt/lists/*
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+WORKDIR /app
+COPY . .
+CMD ["python", "respeaker_service.py"]

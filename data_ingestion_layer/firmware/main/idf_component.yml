@@ -1,0 +1,5 @@
+# Managed components (resolved by the IDF Component Manager at build time).
+dependencies:
+  idf: ">=5.1"
+  espressif/mdns: "^1.4.0"        # sink discovery (_iotsensing-mqtt._tcp)
+  # espressif/esp-dsp: "^1.5.0"   # enable when edge_features FFT paths are validated

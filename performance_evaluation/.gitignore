@@ -1,0 +1,19 @@
+# Performance evaluation results
+results/*.csv
+results/*.json
+results/*.png
+results/*.txt
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Test outputs
+test_*.csv
+test_*.json
+test_*.png
+test_*.txt
+
+# Keep directory structure but ignore contents
+!results/.gitkeep

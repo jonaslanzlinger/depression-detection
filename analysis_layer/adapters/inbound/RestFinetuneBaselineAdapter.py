@@ -17,9 +17,11 @@ def create_service_finetune_baseline(use_case: FinetuneBaselineUseCase):
             total_score = phq9_data.get("total_score")
             functional_impact = phq9_data.get("functional_impact")
             timestamp = phq9_data.get("timestamp")
+            system_mode = phq9_data.get("system_mode")
 
             use_case.finetune_baseline(
-                user_id, phq9_scores, total_score, functional_impact, timestamp
+                user_id, phq9_scores, total_score, functional_impact, timestamp,
+                system_mode=system_mode,
             )
 
             return {

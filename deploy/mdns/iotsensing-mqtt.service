@@ -1,0 +1,12 @@
+<?xml version="1.0" standalone='no'?>
+<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+<!-- Advertises the IHearYou MQTT broker on the LAN so plug-and-play edge nodes discover it
+     (no compiled-in server IP). Install to /etc/avahi/services/ on the broker host. -->
+<service-group>
+  <name replace-wildcards="yes">IHearYou MQTT sink on %h</name>
+  <service>
+    <type>_iotsensing-mqtt._tcp</type>
+    <port>1883</port>
+    <txt-record>tls=0</txt-record>
+  </service>
+</service-group>

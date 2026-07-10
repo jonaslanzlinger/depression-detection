@@ -1,5 +1,8 @@
 __pycache__/
 venv/
+.venv-test/
+.pytest_cache/
+research-roadmap/
 **/node_modules/
 **/package-lock.json
 
@@ -26,3 +29,15 @@ processing_layer/metrics_computation/voice_metrics/core/myprosody/myprosody/data
 ex_files
 
 **/performance_log.csv
+
+# AI assistant local guidance
+CLAUDE.md
+GEMINI.md
+
+# Board credentials (WiFi passwords, server IPs)
+**/credentials.h
+# Secrets (Mongo/MQTT auth)
+.env
+mosquitto.passwd
+mosquitto.acl
+docs/paper/

@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Optional
 import pandas as pd
 
 
@@ -9,6 +10,7 @@ class AnalyzedMetricRecord:
     timestamp: datetime
     metric_name: str
     analyzed_value: float
+    system_mode: Optional[str] = None
 
     def to_dict(self):
         ts = self.timestamp
@@ -20,9 +22,12 @@ class AnalyzedMetricRecord:
 
         ts = ts.replace(tzinfo=None)
 
-        return {
+        result = {
             "user_id": self.user_id,
             "timestamp": self.timestamp,
             "metric_name": self.metric_name,
             "analyzed_value": self.analyzed_value,
         }
+        if self.system_mode is not None:
+            result["system_mode"] = self.system_mode
+        return result

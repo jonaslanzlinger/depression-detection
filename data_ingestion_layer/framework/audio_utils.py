@@ -53,3 +53,69 @@ def int2float(sound):
         sound *= 1 / 32768
     sound = sound.squeeze()
     return sound
+
+
+def calculate_audio_metrics(audio_np: np.ndarray, sample_rate: int, noise_floor: float = None) -> dict:
+    """
+    Calculates audio quality metrics: RMS, Peak, Clipping, dBFS, Dynamic Range, SNR.
+    Assumes audio_np is int16 or float32.
+    
+    Args:
+        audio_np: Audio samples as numpy array
+        sample_rate: Sample rate in Hz
+        noise_floor: Optional noise floor RMS value for SNR calculation
+    
+    Returns:
+        Dictionary containing audio metrics
+    """
+    metrics = {
+        "rms": 0.0,
+        "peak_amplitude": 0.0,
+        "clipping_count": 0,
+        "db_fs": -96.0,  # approximate silence floor
+        "dynamic_range": 0.0,
+        "snr": None  # Will be None if noise_floor not provided
+    }
+
+    if len(audio_np) == 0:
+        return metrics
+
+    # Normalize to float for calculations
+    if audio_np.dtype == np.int16:
+        # Check for clipping in int16
+        metrics["clipping_count"] = int(np.sum((audio_np == 32767) | (audio_np == -32768)))
+        audio_float = audio_np.astype(np.float32) / 32768.0
+    else:
+        # Assumed float between -1.0 and 1.0
+        audio_float = audio_np
+        # Estimation for clipping in float domain (usually > 0.99 or >= 1.0)
+        metrics["clipping_count"] = int(np.sum(np.abs(audio_float) >= 1.0))
+
+    # Peak Amplitude
+    peak = np.max(np.abs(audio_float))
+    metrics["peak_amplitude"] = float(peak)
+
+    # RMS
+    rms = np.sqrt(np.mean(audio_float**2))
+    metrics["rms"] = float(rms)
+
+    # dBFS (decibels relative to full scale)
+    if rms > 0:
+        metrics["db_fs"] = float(20 * np.log10(rms))
+    else:
+        metrics["db_fs"] = -96.0  # approximate silence floor
+
+    # Dynamic Range: ratio between peak and RMS
+    if rms > 0 and peak > 0:
+        metrics["dynamic_range"] = float(20 * np.log10(peak / rms))
+    else:
+        metrics["dynamic_range"] = 0.0
+
+    # SNR: Signal-to-Noise Ratio
+    # SNR can be negative if signal is weaker than noise floor, which is valid
+    if noise_floor is not None and noise_floor > 0 and rms > 0:
+        metrics["snr"] = float(20 * np.log10(rms / noise_floor))
+    else:
+        metrics["snr"] = None
+
+    return metrics

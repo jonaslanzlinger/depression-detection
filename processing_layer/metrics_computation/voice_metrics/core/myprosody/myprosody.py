@@ -10,6 +10,46 @@ from scipy.stats import ttest_ind
 import os
 import contextlib
 import io
+import pickle
+
+
+class MyprosodyModels:
+    """Singleton cache for myprosody ML models"""
+
+    _instance = None
+    _models = {}
+
+    def __new__(cls, model_path=None):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            if model_path:
+                cls._load_models(model_path)
+        return cls._instance
+
+    @classmethod
+    def _load_models(cls, path):
+        """Load all models once at initialization"""
+        model_names = [
+            "CART_model.sav",
+            "KNN_model.sav",
+            "LDA_model.sav",
+            "LR_model.sav",
+            "NB_model.sav",
+            "SVN_model.sav",
+        ]
+
+        for name in model_names:
+            filename = os.path.join(path, "dataset", "essen", name)
+            try:
+                with open(filename, "rb") as f:
+                    cls._models[name] = pickle.load(f)
+                    print(f"Loaded model: {name}")
+            except Exception as e:
+                print(f"Failed to load model {name}: {e}")
+
+    def get_model(self, name):
+        """Retrieve cached model"""
+        return self._models.get(name)
 
 
 def run_praat_file(m, p):
@@ -19,9 +59,9 @@ def run_praat_file(m, p):
 
     returns : objects outputed by the praat script
     """
-    sound = p + "/" + "dataset" + "/" + "audioFiles" + "/" + m + ".wav"
-    sourcerun = p + "/" + "dataset" + "/" + "essen" + "/" + "myspsolution.praat"
-    path = p + "/" + "dataset" + "/" + "audioFiles" + "/"
+    sound = os.path.join(p, "dataset", "audioFiles", f"{m}.wav")
+    sourcerun = os.path.join(p, "dataset", "essen", "myspsolution.praat")
+    path = os.path.join(p, "dataset", "audioFiles", "")
 
     assert os.path.isfile(sound), "Wrong path to audio file"
     assert os.path.isfile(sourcerun), "Wrong path to praat script"
@@ -49,9 +89,9 @@ def run_praat_file(m, p):
         )  # This will print the info from the textgrid object, and objects[1] is a parselmouth.Data object with a TextGrid inside
         z2 = z1.strip().split()
         return z2
-    except:
+    except Exception as e:
         z3 = 0
-        print("Try again the sound of the audio was not clear")
+        print(f"Try again the sound of the audio was not clear. Error: {e}")
 
 
 def myspsyl(m, p):
@@ -271,10 +311,10 @@ def mysppron(m, p):
     """
     Pronunciation posteriori probability score percentage
     """
+    sound = os.path.join(p, "dataset", "audioFiles", f"{m}.wav")
+    sourcerun = os.path.join(p, "dataset", "essen", "myspsolution.praat")
+    path = os.path.join(p, "dataset", "audioFiles", "")
 
-    sound = p + "/" + "dataset" + "/" + "audioFiles" + "/" + m + ".wav"
-    sourcerun = p + "/" + "dataset" + "/" + "essen" + "/" + "myspsolution.praat"
-    path = p + "/" + "dataset" + "/" + "audioFiles" + "/"
     try:
         objects = run_file(
             sourcerun,
@@ -302,8 +342,8 @@ def mysppron(m, p):
         a = np.array(db)
         b = np.mean(a) * 100 / 10
         print("Pronunciation_posteriori_probability_score_percentage= :%.2f" % (b))
-    except:
-        print("Try again the sound of the audio was not clear")
+    except Exception as e:
+        print(f"Try again the sound of the audio was not clear. Error: {e}")
     return
 
 
@@ -311,9 +351,10 @@ def myspgend(m, p):
     """
     Gender recognition and mood of speech
     """
-    sound = p + "/" + "dataset" + "/" + "audioFiles" + "/" + m + ".wav"
-    sourcerun = p + "/" + "dataset" + "/" + "essen" + "/" + "myspsolution.praat"
-    path = p + "/" + "dataset" + "/" + "audioFiles" + "/"
+    sound = os.path.join(p, "dataset", "audioFiles", f"{m}.wav")
+    sourcerun = os.path.join(p, "dataset", "essen", "myspsolution.praat")
+    path = os.path.join(p, "dataset", "audioFiles", "")
+
     try:
         objects = run_file(
             sourcerun,
@@ -415,22 +456,23 @@ def myspgend(m, p):
             )
         else:
             print("Voice not recognized")
-    except:
-        print("Try again the sound of the audio was not clear")
+    except Exception as e:
+        print(f"Try again the sound of the audio was not clear. Error: {e}")
 
 
 def myprosody(m, p):
     """
     Compared to native speech, here are the prosodic features of your speech
     """
-    sound = p + "/" + "dataset" + "/" + "audioFiles" + "/" + m + ".wav"
-    sourcerun = p + "/" + "dataset" + "/" + "essen" + "/" + "MLTRNL.praat"
-    path = p + "/" + "dataset" + "/" + "audioFiles" + "/"
-    outo = p + "/" + "dataset" + "/" + "datanewchi22.csv"
-    outst = p + "/" + "dataset" + "/" + "datanewchi44.csv"
-    outsy = p + "/" + "dataset" + "/" + "datanewchi33.csv"
-    pa2 = p + "/" + "dataset" + "/" + "stats.csv"
-    pa7 = p + "/" + "dataset" + "/" + "datanewchi44.csv"
+    sound = os.path.join(p, "dataset", "audioFiles", f"{m}.wav")
+    sourcerun = os.path.join(p, "dataset", "essen", "MLTRNL.praat")
+    path = os.path.join(p, "dataset", "audioFiles", "")
+    outo = os.path.join(p, "dataset", "datanewchi22.csv")
+    outst = os.path.join(p, "dataset", "datanewchi44.csv")
+    outsy = os.path.join(p, "dataset", "datanewchi33.csv")
+    pa2 = os.path.join(p, "dataset", "stats.csv")
+    pa7 = os.path.join(p, "dataset", "datanewchi44.csv")
+
     result_array = np.empty((0, 100))
     files = glob.glob(path)
     result_array = np.empty((0, 27))
@@ -576,8 +618,8 @@ def myprosody(m, p):
             else:
                 dfout = "%s:\t (%s)" % (nsns[i], ":Out of Range")
                 print(dfout)
-    except:
-        print("Try again the sound of the audio was not clear")
+    except Exception as e:
+        print(f"Try again the sound of the audio was not clear. Error: {e}")
 
 
 def mysplev(m, p):
@@ -595,12 +637,13 @@ def mysplev(m, p):
 
     if not sys.warnoptions:
         warnings.simplefilter("ignore")
-    sound = p + "/" + "dataset" + "/" + "audioFiles" + "/" + m + ".wav"
-    sourcerun = p + "/" + "dataset" + "/" + "essen" + "/" + "MLTRNL.praat"
-    path = p + "/" + "dataset" + "/" + "audioFiles" + "/"
-    pa1 = p + "/" + "dataset" + "/" + "datanewchi23.csv"
-    pa7 = p + "/" + "dataset" + "/" + "datanewchi45.csv"
-    pa5 = p + "/" + "dataset" + "/" + "datanewchi34.csv"
+    sound = os.path.join(p, "dataset", "audioFiles", f"{m}.wav")
+    sourcerun = os.path.join(p, "dataset", "essen", "MLTRNL.praat")
+    path = os.path.join(p, "dataset", "audioFiles", "")
+    pa1 = os.path.join(p, "dataset", "datanewchi23.csv")
+    pa7 = os.path.join(p, "dataset", "datanewchi45.csv")
+    pa5 = os.path.join(p, "dataset", "datanewchi34.csv")
+
     result_array = np.empty((0, 100))
     ph = sound
     files = glob.glob(ph)
@@ -708,11 +751,10 @@ def mysplev(m, p):
         x = array[:, 0:13]
 
         def myspp(bp, bg):
-            sound = bg + "/" + "dataset" + "/" + "audioFiles" + "/" + bp + ".wav"
-            sourcerun = (
-                bg + "/" + "dataset" + "/" + "essen" + "/" + "myspsolution.praat"
-            )
-            path = bg + "/" + "dataset" + "/" + "audioFiles" + "/"
+            sound = os.path.join(bg, "dataset", "audioFiles", f"{bp}.wav")
+            sourcerun = os.path.join(bg, "dataset", "essen", "myspsolution.praat")
+            path = os.path.join(bg, "dataset", "audioFiles", "")
+
             objects = run_file(
                 sourcerun,
                 -20,
@@ -749,34 +791,37 @@ def mysplev(m, p):
             )
             exit()
 
-        filename = p + "/" + "dataset" + "/" + "essen" + "/" + "CART_model.sav"
-        model = pickle.load(open(filename, "rb"))
-        predictions = model.predict(x)
-        print("58% accuracy    ", predictions)
+        # Initialize model cache (singleton)
+        model_cache = MyprosodyModels(p)
 
-        filename = p + "/" + "dataset" + "/" + "essen" + "/" + "KNN_model.sav"
-        model = pickle.load(open(filename, "rb"))
-        predictions = model.predict(x)
-        print("65% accuracy    ", predictions)
+        model = model_cache.get_model("CART_model.sav")
+        if model:
+            predictions = model.predict(x)
+            print("58% accuracy    ", predictions)
 
-        filename = p + "/" + "dataset" + "/" + "essen" + "/" + "LDA_model.sav"
-        model = pickle.load(open(filename, "rb"))
-        predictions = model.predict(x)
-        print("70% accuracy    ", predictions)
+        model = model_cache.get_model("KNN_model.sav")
+        if model:
+            predictions = model.predict(x)
+            print("65% accuracy    ", predictions)
 
-        filename = p + "/" + "dataset" + "/" + "essen" + "/" + "LR_model.sav"
-        model = pickle.load(open(filename, "rb"))
-        predictions = model.predict(x)
-        print("67% accuracy    ", predictions)
+        model = model_cache.get_model("LDA_model.sav")
+        if model:
+            predictions = model.predict(x)
+            print("70% accuracy    ", predictions)
 
-        filename = p + "/" + "dataset" + "/" + "essen" + "/" + "NB_model.sav"
-        model = pickle.load(open(filename, "rb"))
-        predictions = model.predict(x)
-        print("64% accuracy    ", predictions)
+        model = model_cache.get_model("LR_model.sav")
+        if model:
+            predictions = model.predict(x)
+            print("67% accuracy    ", predictions)
 
-        filename = p + "/" + "dataset" + "/" + "essen" + "/" + "SVN_model.sav"
-        model = pickle.load(open(filename, "rb"))
-        predictions = model.predict(x)
-        print("63% accuracy    ", predictions)
-    except:
-        print("Try again the sound of the audio was not clear")
+        model = model_cache.get_model("NB_model.sav")
+        if model:
+            predictions = model.predict(x)
+            print("64% accuracy    ", predictions)
+
+        model = model_cache.get_model("SVN_model.sav")
+        if model:
+            predictions = model.predict(x)
+            print("63% accuracy    ", predictions)
+    except Exception as e:
+        print(f"Try again the sound of the audio was not clear. Error: {e}")

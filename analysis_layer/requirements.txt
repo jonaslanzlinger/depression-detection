@@ -1,4 +1,9 @@
-uvicorn
-fastapi
-pymongo
-pandas
+# Minimal pinned deps for the analysis layer. It only uses FastAPI + numpy/pandas +
+# pymongo (no audio/ML stack), so torch/librosa/numba/Resemblyzer/scipy/sklearn -- which
+# the old freeze-based file dragged in (~2GB+) -- are intentionally absent.
+fastapi==0.135.1
+uvicorn==0.42.0
+numpy==2.2.6
+pandas==2.3.3
+pydantic==2.12.5
+pymongo==4.16.0

@@ -1,0 +1,19 @@
+# IHearYou Firmware - ReSpeaker Lite Specific Configuration
+# Board: ReSpeaker Lite with XMOS XU316 DSP
+
+# =============================================================================
+# Board Selection
+# =============================================================================
+CONFIG_BOARD_RESPEAKER_LITE=y
+# CONFIG_BOARD_RESPEAKER_XVF3800 is not set
+
+# =============================================================================
+# I2S Configuration for XU316
+# =============================================================================
+# XU316 is I2S master, ESP32 is slave
+# No additional I2S config needed - handled in code
+
+# =============================================================================
+# I2C Configuration for TLV320AIC3204 Codec
+# =============================================================================
+# Codec control is minimal - XU316 handles audio processing

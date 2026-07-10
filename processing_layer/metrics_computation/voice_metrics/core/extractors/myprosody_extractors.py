@@ -7,7 +7,12 @@ import contextlib
 import io
 import pandas as pd
 
-MYPROSODY_DIR_PATH = "/app/core/myprosody/myprosody"
+# Get the absolute path to the directory containing this file
+EXTRACTORS_DIR = os.path.dirname(os.path.abspath(__file__))
+# Navigate up to the core directory (processing_layer/metrics_computation/voice_metrics/core)
+CORE_DIR = os.path.dirname(EXTRACTORS_DIR)
+# Define path to myprosody/myprosody
+MYPROSODY_DIR_PATH = os.path.join(CORE_DIR, "myprosody", "myprosody")
 
 
 class MyprosodyMetrics(Enum):
@@ -58,34 +63,48 @@ def myprosody_extractors_handler(
         sample_rate = 16000
 
     temp_wav_name = "temp"
-    temp_wav_path = (
-        f"/app/core/myprosody/myprosody/dataset/audioFiles/{temp_wav_name}.wav"
+    temp_wav_path = os.path.join(
+        MYPROSODY_DIR_PATH, "dataset", "audioFiles", f"{temp_wav_name}.wav"
     )
 
-    sf.write(temp_wav_path, audio_np, sample_rate, subtype="PCM_16")
-
-    results_df = mysp.mysptotal(temp_wav_name, MYPROSODY_DIR_PATH)
-    if results_df is None or results_df.empty:
-        return {}
-
-    results = results_df.iloc[:, 0].tolist()
-
-    if len(results) < len(MYPROSODY_RESULT_KEYS):
-        results += [None] * (len(MYPROSODY_RESULT_KEYS) - len(results))
-
-    result_dict = dict(zip(MYPROSODY_RESULT_KEYS, results))
-    result_dict["pause_count"] = result_dict.get("number_of_pauses")
-
+    # Write temporary file and ensure cleanup. The audioFiles/ dir only ever holds
+    # gitignored temp files, so it is NOT tracked in git -- a fresh build/clone (e.g.
+    # an ARM image for the Raspberry Pi) won't have it, and sf.write would raise,
+    # taking down the whole extraction. Create it on demand to be self-healing.
+    os.makedirs(os.path.dirname(temp_wav_path), exist_ok=True)
     try:
-        pause_duration = float(result_dict["original_duration"]) - float(
-            result_dict["speaking_duration"]
-        )
-    except (KeyError, TypeError, ValueError):
-        pause_duration = None
+        sf.write(temp_wav_path, audio_np, sample_rate, subtype="PCM_16")
 
-    result_dict["pause_duration"] = pause_duration
+        results_df = mysp.mysptotal(temp_wav_name, MYPROSODY_DIR_PATH)
+        if results_df is None or results_df.empty:
+            return {}
 
-    return {
-        metric.value: result_dict.get(metric.value, None)
-        for metric in myprosody_metrics
-    }
+        results = results_df.iloc[:, 0].tolist()
+
+        if len(results) < len(MYPROSODY_RESULT_KEYS):
+            results += [None] * (len(MYPROSODY_RESULT_KEYS) - len(results))
+
+        result_dict = dict(zip(MYPROSODY_RESULT_KEYS, results))
+        result_dict["pause_count"] = result_dict.get("number_of_pauses")
+
+        try:
+            pause_duration = float(result_dict["original_duration"]) - float(
+                result_dict["speaking_duration"]
+            )
+        except (KeyError, TypeError, ValueError):
+            pause_duration = None
+
+        result_dict["pause_duration"] = pause_duration
+
+        return {
+            metric.value: result_dict.get(metric.value, None)
+            for metric in myprosody_metrics
+        }
+    finally:
+        # Clean up temporary file to prevent disk space accumulation
+        if os.path.exists(temp_wav_path):
+            try:
+                os.remove(temp_wav_path)
+            except OSError as e:
+                # Log but don't fail on cleanup errors (file permissions, etc.)
+                print(f"Warning: Could not remove temporary file {temp_wav_path}: {e}")

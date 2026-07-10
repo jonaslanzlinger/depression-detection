@@ -1,0 +1,45 @@
+{
+    "_comment": "Scene Analysis Configuration - Thresholds for Live Mode Gatekeeper",
+    "_version": "1.0.0",
+
+    "context_window": {
+        "buffer_size": 12,
+        "_description": "Number of audio chunks in sliding window (12 * 5s = 60s)"
+    },
+
+    "speaker_verification": {
+        "similarity_threshold_high": 0.70,
+        "similarity_threshold_low": 0.55,
+        "_description": "Cosine similarity thresholds for speaker identification. HIGH = confident match, LOW = rejection threshold."
+    },
+
+    "mechanical_detection": {
+        "zcr_threshold": 0.12,
+        "centroid_threshold_hz": 2500,
+        "energy_variance_threshold": 0.005,
+        "flatness_threshold": 0.25,
+        "_description": "Thresholds for detecting typing/mechanical sounds. Tuned for typical office keyboard clicks."
+    },
+
+    "context_classification": {
+        "solo_activity_ratio": 0.5,
+        "background_noise_ratio": 0.6,
+        "_description": "Ratios for classifying room context. solo > 0.5 target_user, noise > 0.6 mostly background."
+    },
+
+    "hardware_profiles": {
+        "_description": "Pre-tuned profiles for specific hardware configurations",
+        "respeaker_4mic": {
+            "similarity_threshold_high": 0.68,
+            "similarity_threshold_low": 0.52,
+            "zcr_threshold": 0.14,
+            "centroid_threshold_hz": 2800
+        },
+        "usb_microphone": {
+            "similarity_threshold_high": 0.72,
+            "similarity_threshold_low": 0.58,
+            "zcr_threshold": 0.10,
+            "centroid_threshold_hz": 2200
+        }
+    }
+}

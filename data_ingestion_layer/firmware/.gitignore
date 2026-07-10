@@ -1,0 +1,13 @@
+# ESP-IDF build artifacts
+build/
+build_xvf/
+sdkconfig
+sdkconfig.old
+sdkconfig.xvf
+sdkconfig.xvf.old
+dependencies.lock
+managed_components/
+
+# Site-specific deploy overrides — contain Wi-Fi and bootstrap MQTT credentials.
+# (sdkconfig.defaults / .lite / .xvf3800 ARE committed; only the deploy layer is not.)
+sdkconfig.defaults.deploy

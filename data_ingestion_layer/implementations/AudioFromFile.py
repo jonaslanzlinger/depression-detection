@@ -15,6 +15,9 @@ class AudioFromFile(AbstractAudioDevice):
         topic="miscellaneous",
         mqtthostname="localhost",
         mqttport=1883,
+        board_id=None,
+        user_id=None,
+        system_mode="live",
     ):
         super().__init__(
             sample_rate=sample_rate,
@@ -23,6 +26,9 @@ class AudioFromFile(AbstractAudioDevice):
             topic=topic,
             mqtthostname=mqtthostname,
             mqttport=mqttport,
+            board_id=board_id,
+            user_id=user_id,
+            system_mode=system_mode,
         )
         self.filepath = filepath
         self.audio_data = None

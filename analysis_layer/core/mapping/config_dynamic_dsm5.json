@@ -1,0 +1,367 @@
+{
+   "_comment": "Dynamic Acoustic Phenotyping Config - Phase 2. This config uses behavioral dynamics metrics (CV, entropy, silence_ratio) that better correlate with DSM-5 depression criteria.",
+   "_version": "2.0.0",
+   "_created": "2025-12-27",
+
+   "1_depressed_mood": {
+      "_rationale": "Monotone speech (low pitch variability) is a hallmark of depressed mood. Low f0_cv and f0_entropy indicate flat, predictable intonation patterns.",
+      "metrics": {
+         "f0_cv": {
+            "weight": 2.0,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0,
+            "_note": "LOW CV = monotone speech = depression marker (KEY INDICATOR)"
+         },
+         "f0_entropy": {
+            "weight": 1.5,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0,
+            "_note": "LOW entropy = predictable/flat intonation"
+         },
+         "f0_avg": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0
+         },
+         "f0_std": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0
+         },
+         "rms_energy_cv": {
+            "weight": 1.5,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0,
+            "_note": "LOW energy variability = flat affect"
+         },
+         "silence_ratio": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive",
+            "clipping_threshold": 3.0,
+            "_note": "More silence = reduced speech initiation"
+         },
+         "spectral_flatness": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive",
+            "clipping_threshold": 3.0
+         },
+         "rate_of_speech": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0
+         },
+         "jitter": {
+            "weight": 0.5,
+            "correlation": "linear",
+            "direction": "positive",
+            "clipping_threshold": 3.0
+         },
+         "shimmer": {
+            "weight": 0.5,
+            "correlation": "linear",
+            "direction": "positive",
+            "clipping_threshold": 3.0
+         }
+      },
+      "smoothing_factor": 0.8667,
+      "severity_threshold": 0.5
+   },
+
+   "2_loss_of_interest": {
+      "_rationale": "Anhedonia manifests as reduced emotional expressivity and flat affect in speech.",
+      "metrics": {
+         "f0_cv": {
+            "weight": 1.5,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0,
+            "_note": "Reduced pitch variability = emotional blunting"
+         },
+         "f0_entropy": {
+            "weight": 1.5,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0
+         },
+         "f0_iqr": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0
+         },
+         "rms_energy_cv": {
+            "weight": 1.5,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0,
+            "_note": "Reduced energy dynamics = flat affect"
+         },
+         "rms_energy_entropy": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0
+         },
+         "rms_energy_range": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0
+         },
+         "speech_velocity": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0,
+            "_note": "Slower state transitions = reduced engagement"
+         }
+      },
+      "smoothing_factor": 0.8667,
+      "severity_threshold": 0.5
+   },
+
+   "3_significant_weight_changes": {
+      "_rationale": "Not acoustically measurable. Set to 0 in derived scores.",
+      "metrics": {},
+      "smoothing_factor": 0.8667,
+      "severity_threshold": 0.5
+   },
+
+   "4_insomnia_hypersomnia": {
+      "_rationale": "Sleep disruption affects voice quality (HNR) and modulation patterns. Fatigue from poor sleep shows in vocal effort.",
+      "metrics": {
+         "hnr_mean": {
+            "weight": 1.5,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0,
+            "_note": "Lower HNR = breathier/hoarse voice from fatigue"
+         },
+         "hnr_cv": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive",
+            "clipping_threshold": 3.0,
+            "_note": "High variability = inconsistent voice quality"
+         },
+         "rms_energy_mean": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0,
+            "_note": "Lower energy = fatigue from poor sleep"
+         },
+         "temporal_modulation": {
+            "weight": 1.0,
+            "correlation": "nonlinear",
+            "direction": "anomaly",
+            "clipping_threshold": 3.0
+         },
+         "spectral_modulation": {
+            "weight": 1.0,
+            "correlation": "nonlinear",
+            "direction": "anomaly",
+            "clipping_threshold": 3.0
+         }
+      },
+      "smoothing_factor": 0.8667,
+      "severity_threshold": 0.5
+   },
+
+   "5_psychomotor_retardation_agitation": {
+      "_rationale": "This is the KEY indicator for behavioral dynamics. Silence ratio and speech velocity are direct measures of psychomotor state.",
+      "metrics": {
+         "silence_ratio": {
+            "weight": 3.0,
+            "correlation": "linear",
+            "direction": "positive",
+            "clipping_threshold": 3.0,
+            "_note": "HIGH silence ratio = psychomotor retardation (PRIMARY MARKER)"
+         },
+         "speech_velocity": {
+            "weight": 2.0,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0,
+            "_note": "LOW speech velocity = slower, fragmented speech"
+         },
+         "pause_mean_duration": {
+            "weight": 2.0,
+            "correlation": "linear",
+            "direction": "positive",
+            "clipping_threshold": 3.0,
+            "_note": "Longer pauses = cognitive/motor slowing"
+         },
+         "pause_max_duration": {
+            "weight": 1.5,
+            "correlation": "linear",
+            "direction": "positive",
+            "clipping_threshold": 3.0,
+            "_note": "Very long pauses indicate significant retardation"
+         },
+         "pause_total_duration": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive",
+            "clipping_threshold": 3.0
+         },
+         "rate_of_speech": {
+            "weight": 1.5,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0
+         },
+         "articulation_rate": {
+            "weight": 1.5,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0
+         },
+         "f2_transition_speed": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0,
+            "_note": "Slower articulatory movements"
+         },
+         "voice_onset_time": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "positive",
+            "clipping_threshold": 3.0
+         },
+         "voiced_ratio": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0,
+            "_note": "Less voiced speech = less speech production"
+         }
+      },
+      "smoothing_factor": 0.8667,
+      "severity_threshold": 0.5
+   },
+
+   "6_fatigue_loss_of_energy": {
+      "_rationale": "Fatigue manifests as reduced vocal effort and energy dynamics.",
+      "metrics": {
+         "rms_energy_mean": {
+            "weight": 2.0,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0,
+            "_note": "LOW energy = reduced vocal effort (KEY MARKER)"
+         },
+         "rms_energy_cv": {
+            "weight": 1.5,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0,
+            "_note": "Low variability = consistent low effort"
+         },
+         "hnr_mean": {
+            "weight": 1.5,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0,
+            "_note": "Breathier voice from fatigue"
+         },
+         "speech_velocity": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0
+         },
+         "temporal_modulation": {
+            "weight": 1.0,
+            "correlation": "nonlinear",
+            "direction": "anomaly",
+            "clipping_threshold": 3.0
+         },
+         "spectral_modulation": {
+            "weight": 1.0,
+            "correlation": "nonlinear",
+            "direction": "anomaly",
+            "clipping_threshold": 3.0
+         }
+      },
+      "smoothing_factor": 0.8667,
+      "severity_threshold": 0.5
+   },
+
+   "7_feelings_of_worthlessness_guilt": {
+      "_rationale": "Primarily requires textual/semantic analysis. Limited acoustic markers.",
+      "metrics": {},
+      "smoothing_factor": 0.8667,
+      "severity_threshold": 0.5
+   },
+
+   "8_diminished_ability_to_think_or_concentrate": {
+      "_rationale": "Cognitive impairment shows in pause patterns, speech fragmentation, and variable timing.",
+      "metrics": {
+         "pause_std_duration": {
+            "weight": 2.0,
+            "correlation": "linear",
+            "direction": "positive",
+            "clipping_threshold": 3.0,
+            "_note": "HIGH pause variability = irregular cognitive processing (KEY MARKER)"
+         },
+         "pause_mean_duration": {
+            "weight": 1.5,
+            "correlation": "linear",
+            "direction": "positive",
+            "clipping_threshold": 3.0,
+            "_note": "Longer pauses = processing delays"
+         },
+         "pause_count_dynamic": {
+            "weight": 1.5,
+            "correlation": "linear",
+            "direction": "positive",
+            "clipping_threshold": 3.0,
+            "_note": "More pauses = fragmented speech"
+         },
+         "speech_velocity": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0
+         },
+         "f0_entropy": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0,
+            "_note": "Low entropy = reduced spontaneity"
+         },
+         "f0_std": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0
+         },
+         "glottal_pulse_rate": {
+            "weight": 1.0,
+            "correlation": "linear",
+            "direction": "negative",
+            "clipping_threshold": 3.0
+         }
+      },
+      "smoothing_factor": 0.8667,
+      "severity_threshold": 0.5
+   },
+
+   "9_recurrent_thoughts_of_death_or_being_suicidal": {
+      "_rationale": "Not acoustically measurable - requires verbal content analysis or clinical self-report (PHQ-9 item 9).",
+      "metrics": {},
+      "smoothing_factor": 0.8667,
+      "severity_threshold": 0.5
+   }
+}

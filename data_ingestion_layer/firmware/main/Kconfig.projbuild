@@ -1,0 +1,235 @@
+menu "IHearYou Firmware Configuration"
+
+    choice BOARD_TYPE
+        prompt "Target Board"
+        default BOARD_RESPEAKER_LITE
+        help
+            Select the target ReSpeaker board variant.
+
+        config BOARD_RESPEAKER_LITE
+            bool "ReSpeaker Lite (XMOS XU316, 2-mic)"
+            help
+                ReSpeaker Lite with XMOS XU316 DSP and dual microphone array.
+                Supports: IC, AEC, NS, AGC
+                I2S Mode: Slave (XU316 is master)
+
+        config BOARD_RESPEAKER_XVF3800
+            bool "ReSpeaker XVF3800 (4-mic, advanced DSP)"
+            help
+                ReSpeaker XVF3800 with 4-microphone circular array.
+                Supports: AEC, Beamforming, De-reverb, DNN-NS, DoA, VAD, AGC
+                I2S Mode: Slave (XVF3800 is master)
+    endchoice
+
+    choice TRANSPORT_MODE
+        prompt "Transport"
+        default TRANSPORT_MQTT_OFFLOAD
+        help
+            How captured speech leaves the node.
+
+        config TRANSPORT_MQTT_OFFLOAD
+            bool "Plug-and-play MQTT offload (mDNS discovery + capability negotiation)"
+            help
+                The plug-and-play path: provision once (or ride the default site SSID),
+                mDNS-discover the broker, advertise capabilities, receive an assignment,
+                publish VAD-gated segments (or features) over authenticated MQTT.
+
+        config TRANSPORT_LEGACY_TCP
+            bool "Legacy raw TCP to respeaker_service (compiled server IP)"
+            help
+                The original pipeline: stream VAD-gated PCM to SERVER_HOST:SERVER_PORT.
+    endchoice
+
+    menu "Plug-and-play Provisioning"
+        depends on TRANSPORT_MQTT_OFFLOAD
+
+        config DEFAULT_SITE_SSID
+            string "Default site SSID (zero-config)"
+            default "IHearYou-Net"
+            help
+                Factory-fresh nodes try this network BEFORE opening the setup portal.
+                Broadcast it from the site's central node (clinic AP) and boards need no
+                per-device configuration at all: power on -> join -> discover -> pending
+                approval in the dashboard.
+
+        config DEFAULT_SITE_PASS
+            string "Default site password"
+            default "ihearyou-setup"
+
+        config BOOTSTRAP_MQTT_USER
+            string "Bootstrap MQTT username"
+            default "node-bootstrap"
+            help
+                Low-privilege enrollment account: ACL-limited to nodes/{id}/capabilities,
+                nodes/{id}/status (pub) and nodes/{id}/config, nodes/{id}/provision (sub).
+                Per-node credentials are minted at dashboard approval (EDGE_TRUST_MODEL.md).
+
+        config BOOTSTRAP_MQTT_PASS
+            string "Bootstrap MQTT password"
+            default ""
+
+        config EDGE_FEATURE_SNR
+            bool "Advertise on-node SNR"
+            default y
+
+        config EDGE_FEATURE_SPECTRAL_FLATNESS
+            bool "Advertise on-node spectral flatness"
+            default y
+
+        config BUTTON_GPIO
+            int "User-button GPIO (Usr / BUT_A)"
+            default 0
+            range 0 48
+            help
+                ESP32-S3 GPIO of the board user button: "Usr" on the ReSpeaker Lite,
+                "BUT_A" on the ReSpeaker XVF3800. Default 0 = the module BOOT button
+                (always works, but may be inaccessible inside a case). VERIFY the real
+                GPIO at bring-up (see BUILD_AND_FLASH.md §1a) -- do not trust guesses.
+                Note: the Lite's "Mute" button is a hardware mic mute at the XU316
+                codec (own LED), independent of this firmware.
+
+    endmenu
+
+    menu "Network Configuration"
+
+        config WIFI_SSID
+            string "WiFi SSID"
+            default "myssid"
+            help
+                SSID of the WiFi network to connect to.
+
+        config WIFI_PASSWORD
+            string "WiFi Password"
+            default "mypassword"
+            help
+                Password for the WiFi network.
+
+        config SERVER_HOST
+            string "Server IP Address"
+            default "192.168.1.100"
+            help
+                IP address of the machine running respeaker_service.py
+
+        config SERVER_PORT
+            int "Server Port"
+            default 8010
+            range 1 65535
+            help
+                TCP port for the respeaker service.
+
+        config WIFI_MAXIMUM_RETRY
+            int "Maximum WiFi Retry"
+            default 10
+            range 1 100
+            help
+                Maximum number of retries for WiFi connection.
+
+        config RECONNECT_DELAY_MS
+            int "Reconnect Delay (ms)"
+            default 1000
+            range 100 10000
+            help
+                Delay between reconnection attempts.
+
+    endmenu
+
+    menu "Audio Configuration"
+
+        config VAD_THRESHOLD
+            int "VAD Energy Threshold"
+            default 150 if BOARD_RESPEAKER_LITE
+            # 80 was calibrated for the pre-gain-fix XVF3800 (digital gain 0). With the
+            # 2026-07-09 gain fix (shift 16) the amplified noise floor sits ABOVE 80, so
+            # the VAD self-triggers continuously (~1200 false segments/hour measured in a
+            # sleeping house, 27k noise segments in 18h). 400 is a deliberate over-correction
+            # starting point; CALIBRATE per BUILD_AND_FLASH.md §"XVF VAD calibration" —
+            # acceptance: a silent room must produce ~0 segments/hour.
+            default 400 if BOARD_RESPEAKER_XVF3800
+            range 10 1000
+            help
+                Energy threshold for voice activity detection.
+                Higher values = less sensitive, fewer false positives.
+                ReSpeaker Lite typically needs higher threshold due to less NS.
+
+        config VAD_HANGOVER_MS
+            int "VAD Hangover Time (ms)"
+            default 500
+            range 100 2000
+            help
+                Time to continue streaming after speech ends.
+
+        config AUDIO_CHUNK_DURATION_S
+            int "Audio Chunk Duration (seconds)"
+            default 5
+            range 1 30
+            help
+                Duration of audio chunks sent to server.
+
+        config RING_BUFFER_SIZE_KB
+            int "Ring Buffer Size (KB)"
+            default 512
+            range 64 2048
+            help
+                Size of the audio ring buffer in PSRAM.
+                Must be large enough to handle network outages.
+
+    endmenu
+
+    menu "XVF3800 Configuration"
+        depends on BOARD_RESPEAKER_XVF3800
+
+        config XVF3800_AGC_ENABLED
+            bool "Enable XVF3800 AGC"
+            default n
+            help
+                Enable Automatic Gain Control on XVF3800.
+                WARNING: AGC may affect amplitude-based depression indicators.
+                Disable for depression detection use case.
+
+        config XVF3800_DEREVERB_ENABLED
+            bool "Enable XVF3800 De-reverberation"
+            default y
+            help
+                Enable de-reverberation on XVF3800.
+                Recommended for cleaner formant extraction.
+
+        config XVF3800_BEAM_MODE
+            int "Beamforming Mode"
+            default 1
+            range 0 1
+            help
+                0 = Fixed beam (forward-facing)
+                1 = Adaptive beam (tracks speaker)
+
+        config XVF3800_INCLUDE_DOA
+            bool "Include Direction of Arrival in Metadata"
+            default y
+            help
+                Query and include DoA azimuth in audio chunk metadata.
+                Useful for psychomotor indicators research.
+
+    endmenu
+
+    menu "Debug Configuration"
+
+        config ENABLE_AUDIO_DEBUG
+            bool "Enable Audio Debug Output"
+            default n
+            help
+                Enable verbose audio pipeline debugging.
+
+        config ENABLE_NETWORK_DEBUG
+            bool "Enable Network Debug Output"
+            default n
+            help
+                Enable verbose network debugging.
+
+        config ENABLE_TELEMETRY
+            bool "Enable Firmware Telemetry"
+            default y
+            help
+                Enable periodic telemetry reporting.
+
+    endmenu
+
+endmenu

@@ -10,7 +10,7 @@ def create_service_analyze_metrics(
     router = APIRouter()
 
     @router.get("/analyze_metrics")
-    async def analyze_metrics(user_id: int = Query(...)):
+    async def analyze_metrics(user_id: str = Query(...)):
         try:
             analyzed_metrics = use_case.analyze_metrics(user_id, baseline_manager)
             return analyzed_metrics

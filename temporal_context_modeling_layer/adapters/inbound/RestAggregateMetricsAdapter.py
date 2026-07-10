@@ -7,7 +7,7 @@ def create_service_aggregate_metrics(use_case: AggregateMetricsUseCase):
     router = APIRouter()
 
     @router.get("/aggregate_metrics")
-    async def aggregate_metrics(user_id: int = Query(...)):
+    async def aggregate_metrics(user_id: str = Query(...)):
         try:
             aggregated_metrics = use_case.aggregate_metrics(user_id)
             return aggregated_metrics

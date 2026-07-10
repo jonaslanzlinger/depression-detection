@@ -15,6 +15,9 @@ class VoiceFromFile(AudioFromFile):
         topic="miscellaneous",
         mqtthostname="localhost",
         mqttport=1883,
+        board_id=None,
+        user_id=None,
+        system_mode="live",
     ):
         super().__init__(
             filepath=filepath,
@@ -24,6 +27,9 @@ class VoiceFromFile(AudioFromFile):
             topic=topic,
             mqtthostname=mqtthostname,
             mqttport=mqttport,
+            board_id=board_id,
+            user_id=user_id,
+            system_mode=system_mode,
         )
 
         model, utils = torch.hub.load(

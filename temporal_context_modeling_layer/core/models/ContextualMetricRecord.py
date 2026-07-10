@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Optional
 import pandas as pd
 
 
@@ -10,6 +11,7 @@ class ContextualMetricRecord:
     metric_name: str
     contextual_value: float
     metric_dev: float
+    system_mode: Optional[str] = None
 
     def to_dict(self):
         ts = self.timestamp
@@ -21,10 +23,13 @@ class ContextualMetricRecord:
 
         ts = ts.replace(tzinfo=None)
 
-        return {
+        result = {
             "user_id": self.user_id,
             "timestamp": ts,
             "metric_name": self.metric_name,
             "contextual_value": self.contextual_value,
             "metric_dev": self.metric_dev,
         }
+        if self.system_mode is not None:
+            result["system_mode"] = self.system_mode
+        return result

@@ -2,7 +2,10 @@ import librosa
 import numpy as np
 
 
-# TODO constants always on top of the code
+FMIN = 30
+FMAX = 2000
+
+
 def get_f0_avg(features_LLD, audio_signal, sr):
     """
     Compute fundamental frequency (F0) average using openSMILE and librosa in combination
@@ -17,7 +20,7 @@ def get_f0_avg(features_LLD, audio_signal, sr):
 
     # librosa f0 average computation
     y = np.array(audio_signal, dtype=np.float32)
-    f0, _, _ = librosa.pyin(y, fmin=30, fmax=2000, sr=sr)
+    f0, _, _ = librosa.pyin(y, fmin=FMIN, fmax=FMAX, sr=sr)
 
     # print(f0_opensmile_mean)
     # print(np.nanmean(f0))
@@ -42,7 +45,7 @@ def get_f0_std(features_LLD, audio_signal, sr):
 
     # librosa f0 standard deviation computation
     y = np.array(audio_signal, dtype=np.float32)
-    f0, _, _ = librosa.pyin(y, fmin=30, fmax=2000, sr=sr)
+    f0, _, _ = librosa.pyin(y, fmin=FMIN, fmax=FMAX, sr=sr)
 
     # print(f0_opensmile_std)
     # print(np.nanstd(f0))

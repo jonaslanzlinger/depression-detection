@@ -4,7 +4,7 @@ from framework.AbstractEdgeDevice import AbstractEdgeDevice
 from framework.payloads.AudioPayload import AudioPayload
 import time
 import numpy as np
-from framework.audio_utils import encode_audio_to_base64
+from framework.audio_utils import encode_audio_to_base64, calculate_audio_metrics
 
 
 class AbstractAudioDevice(AbstractEdgeDevice):
@@ -16,11 +16,17 @@ class AbstractAudioDevice(AbstractEdgeDevice):
         topic="miscellaneous",
         mqtthostname="localhost",
         mqttport=1883,
+        board_id=None,
+        user_id=None,
+        system_mode="live",
     ):
         super().__init__(topic=topic, mqtthostname=mqtthostname, mqttport=mqttport)
         self.sample_rate = sample_rate
         self.channels = channels
         self.dtype = dtype
+        self.board_id = board_id
+        self.user_id = user_id
+        self.system_mode = system_mode
 
     @abstractmethod
     def collect(self) -> np.ndarray:
@@ -37,8 +43,16 @@ class AbstractAudioDevice(AbstractEdgeDevice):
             audio_np = filtered_data
         audio_b64 = encode_audio_to_base64(audio_np, self.sample_rate)
 
+        metrics = calculate_audio_metrics(audio_np, self.sample_rate)
+
         payload = AudioPayload(
-            data=audio_b64, timestamp=time.time(), sample_rate=self.sample_rate
+            data=audio_b64,
+            timestamp=time.time(),
+            sample_rate=self.sample_rate,
+            quality_metrics=metrics,
+            board_id=self.board_id,
+            user_id=self.user_id,
+            system_mode=self.system_mode,
         )
 
         payload_str = json.dumps(payload.to_dict())

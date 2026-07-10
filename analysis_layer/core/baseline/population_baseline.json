@@ -1,25 +1,59 @@
 {
    "articulation_rate": { "mean": 4.232, "std": 0.38 },
+
    "f0_avg": { "mean": 148.091, "std": 39.692 },
    "f0_range": { "mean": 135.298, "std": 53.529 },
    "f0_std": { "mean": 25.808, "std": 10.876 },
+   "f0_cv": { "mean": 0.174, "std": 0.045 },
+   "f0_iqr": { "mean": 34.84, "std": 14.68 },
+   "f0_entropy": { "mean": 0.72, "std": 0.12 },
+
    "f2_transition_speed": { "mean": 22.096, "std": 3.845 },
-   "formant_f1_frequencies_mean": {
-      "mean": 1635.678,
-      "std": 55.287
-   },
+
+   "formant_f1_frequencies_mean": { "mean": 1635.678, "std": 55.287 },
+   "formant_f1_std": { "mean": 74.64, "std": 18.5 },
+   "formant_f1_cv": { "mean": 0.046, "std": 0.012 },
+   "formant_f1_iqr": { "mean": 100.64, "std": 24.96 },
+   "formant_f1_entropy": { "mean": 0.68, "std": 0.1 },
+
    "glottal_pulse_rate": { "mean": 104.249, "std": 28.445 },
+
    "hnr_mean": { "mean": -17.393, "std": 11.62 },
+   "hnr_std": { "mean": 15.69, "std": 5.8 },
+   "hnr_cv": { "mean": 0.9, "std": 0.25 },
+   "hnr_iqr": { "mean": 21.19, "std": 7.83 },
+   "hnr_entropy": { "mean": 0.65, "std": 0.12 },
+
    "jitter": { "mean": 0.027, "std": 0.006 },
+
    "pause_count": { "mean": 1.285, "std": 0.391 },
    "pause_duration": { "mean": 0.954, "std": 0.392 },
+   "pause_count_dynamic": { "mean": 2.5, "std": 1.2 },
+   "pause_mean_duration": { "mean": 0.35, "std": 0.15 },
+   "pause_std_duration": { "mean": 0.2, "std": 0.1 },
+   "pause_max_duration": { "mean": 0.8, "std": 0.4 },
+   "pause_total_duration": { "mean": 0.9, "std": 0.4 },
+
    "psd-4": { "mean": 3.76e-7, "std": 6.84e-7 },
    "psd-5": { "mean": 1.4e-7, "std": 2.03e-7 },
    "psd-7": { "mean": 7.5e-8, "std": 1.19e-7 },
+
    "rate_of_speech": { "mean": 3.53, "std": 0.431 },
+
+   "rms_energy_mean": { "mean": 0.045, "std": 0.025 },
    "rms_energy_range": { "mean": 0.089, "std": 0.064 },
    "rms_energy_std": { "mean": 0.016, "std": 0.012 },
+   "rms_energy_cv": { "mean": 0.356, "std": 0.12 },
+   "rms_energy_iqr": { "mean": 0.022, "std": 0.016 },
+   "rms_energy_entropy": { "mean": 0.58, "std": 0.15 },
+
    "shimmer": { "mean": 0.145, "std": 0.018 },
+
+   "silence_ratio": { "mean": 0.25, "std": 0.12 },
+   "speech_velocity": { "mean": 15.0, "std": 5.0 },
+   "voiced_ratio": { "mean": 0.55, "std": 0.12 },
+   "unvoiced_ratio": { "mean": 0.2, "std": 0.08 },
+
    "snr": { "mean": 3.627, "std": 0.562 },
    "spectral_flatness": { "mean": 0.016, "std": 0.005 },
    "spectral_modulation": { "mean": 848.361, "std": 214.39 },

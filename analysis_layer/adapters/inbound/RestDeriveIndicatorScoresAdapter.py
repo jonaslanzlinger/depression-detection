@@ -7,7 +7,7 @@ def create_service_derive_indicator_scores(use_case: DeriveIndicatorScoresUseCas
     router = APIRouter()
 
     @router.get("/derive_indicator_scores")
-    async def derive_indicator_scores(user_id: int = Query(...)):
+    async def derive_indicator_scores(user_id: str = Query(...)):
         try:
             indicator_scores = use_case.derive_indicator_scores(user_id)
             return indicator_scores
